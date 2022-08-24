@@ -1,5 +1,5 @@
 
-from priority_queues.commons cimport (ElementState, DTYPE_t)
+from priority_queues.commons cimport DTYPE_t, ElementState
 
 
 cdef struct Element:
