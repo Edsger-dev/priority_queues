@@ -9,15 +9,12 @@
 """
 
 cimport cython
-
 import numpy as np
-
 cimport numpy as cnp
 from libc.stdlib cimport free, malloc
 
 DTYPE = np.float64
 ctypedef cnp.float64_t DTYPE_t
-
 cdef DTYPE_t INFINITY = <DTYPE_t>np.finfo(dtype=DTYPE).max
 
 cdef enum ElementState:
@@ -317,10 +314,16 @@ cdef void _min_heapify(
     l = _left_child(s)
     r = _right_child(s)
 
-    if (l < bheap.size) and (bheap.elements[bheap.A[l]].key < bheap.elements[bheap.A[s]].key):
+    if (
+        (l < bheap.size) and 
+        (bheap.elements[bheap.A[l]].key < bheap.elements[bheap.A[s]].key)
+    ):
         s = l
 
-    if (r < bheap.size) and (bheap.elements[bheap.A[r]].key < bheap.elements[bheap.A[s]].key):
+    if (
+        (r < bheap.size) and 
+        (bheap.elements[bheap.A[r]].key < bheap.elements[bheap.A[s]].key)
+    ):
         s = r
 
     if s != node_idx:
