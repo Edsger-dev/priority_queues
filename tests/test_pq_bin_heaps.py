@@ -9,3 +9,6 @@ def test_insert_01():
 
 def test_peek_01():
 	peek_01()
+
+def test_extract_min_01():
+	extract_min_01()

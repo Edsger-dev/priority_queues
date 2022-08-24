@@ -1,8 +1,19 @@
 
-from priority_queues.pq_bin_heap cimport (BinaryHeap, init_heap, free_heap, 
-    min_heap_insert, peek)
-from priority_queues.commons cimport (DTYPE_INF, DTYPE_t, IN_HEAP, NOT_IN_HEAP, 
-    SCANNED)
+from priority_queues.pq_bin_heap cimport (
+    BinaryHeap, 
+    init_heap, 
+    free_heap, 
+    min_heap_insert, 
+    peek, 
+    extract_min
+)
+from priority_queues.commons cimport (
+    DTYPE_INF, 
+    DTYPE_t, 
+    IN_HEAP, 
+    NOT_IN_HEAP, 
+    SCANNED
+)
 
 
 cpdef init_01():
@@ -12,6 +23,7 @@ cpdef init_01():
         size_t l = 4
 
     init_heap(&bheap, l)
+
     assert bheap.length == l
     assert bheap.size == 0
     for i in range(l):
@@ -19,6 +31,7 @@ cpdef init_01():
         assert bheap.elements[i].key == DTYPE_INF
         assert bheap.elements[i].state == NOT_IN_HEAP
         assert bheap.elements[i].node_idx == bheap.length
+
     free_heap(&bheap)
 
 
@@ -85,10 +98,10 @@ cpdef insert_01():
 
 cpdef peek_01():
 
-    cdef: 
-        BinaryHeap bheap
+    cdef BinaryHeap bheap
 
     init_heap(&bheap, 6)
+
     min_heap_insert(&bheap, 0, 9.0)
     assert peek(&bheap) == 9.0
     min_heap_insert(&bheap, 1, 9.0)
@@ -101,4 +114,29 @@ cpdef peek_01():
     assert peek(&bheap) == 3.0
     min_heap_insert(&bheap, 5, 1.0)
     assert peek(&bheap) == 1.0
+
+    free_heap(&bheap)
+
+cpdef extract_min_01():
+    
+    cdef BinaryHeap bheap
+
+    init_heap(&bheap, 4)
+    min_heap_insert(&bheap, 1, 3.0)
+    min_heap_insert(&bheap, 0, 2.0)
+    min_heap_insert(&bheap, 3, 4.0)
+    min_heap_insert(&bheap, 2, 1.0)
+    idx = extract_min(&bheap)
+    assert idx == 2
+    assert bheap.size == 3
+    idx = extract_min(&bheap)
+    assert idx == 0
+    assert bheap.size == 2
+    idx = extract_min(&bheap)
+    assert idx == 1
+    assert bheap.size == 1
+    idx = extract_min(&bheap)
+    assert idx == 3
+    assert bheap.size == 0
+
     free_heap(&bheap)

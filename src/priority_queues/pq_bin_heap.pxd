@@ -17,4 +17,5 @@ cdef void init_heap(BinaryHeap*, ssize_t) nogil
 cdef void free_heap(BinaryHeap*) nogil
 cdef void min_heap_insert(BinaryHeap*, ssize_t, DTYPE_t) nogil
 cdef DTYPE_t peek(BinaryHeap*) nogil
+cdef ssize_t extract_min(BinaryHeap*) nogil
 
