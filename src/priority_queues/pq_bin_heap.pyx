@@ -13,14 +13,8 @@ import numpy as np
 cimport numpy as cnp
 from libc.stdlib cimport free, malloc
 
-DTYPE = np.float64
-ctypedef cnp.float64_t DTYPE_t
-cdef DTYPE_t INFINITY = <DTYPE_t>np.finfo(dtype=DTYPE).max
+from priority_queues.commons cimport ElementState, DTYPE_t
 
-cdef enum ElementState:
-   SCANNED = 1
-   NOT_IN_HEAP = 2
-   IN_HEAP = 3
 
 cdef struct Element:
     DTYPE_t key
