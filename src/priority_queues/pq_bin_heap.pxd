@@ -19,4 +19,6 @@ cdef void min_heap_insert(BinaryHeap*, ssize_t, DTYPE_t) nogil
 cdef DTYPE_t peek(BinaryHeap*) nogil
 cdef ssize_t extract_min(BinaryHeap*) nogil
 cdef bint is_empty(BinaryHeap*) nogil
+cdef void decrease_key_from_element_index(BinaryHeap*, ssize_t, DTYPE_t) nogil
+
 

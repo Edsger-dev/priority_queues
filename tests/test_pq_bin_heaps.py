@@ -19,3 +19,6 @@ def test_extract_min_01():
 
 def test_is_empty_01():
     is_empty_01()
+
+def test_decrease_key_from_element_index_01():
+	decrease_key_from_element_index_01()

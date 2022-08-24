@@ -179,43 +179,6 @@ cdef ssize_t extract_min(BinaryHeap* bheap) nogil:
     return element_idx
 
 
-cdef DTYPE_t extract_min_key(BinaryHeap* bheap) nogil:
-    """Extract element with min keay from the heap, 
-    and return its element key.
-
-    input
-    =====
-    * BinaryHeap* bheap : binary heap
-
-    output
-    ======
-    * DTYPE_t : min element key
-
-    assumption
-    ==========
-    * bheap.size > 0
-    """
-    cdef: 
-        ssize_t element_idx = bheap.A[0]  # min element index
-        ssize_t node_idx = bheap.size - 1  # last leaf node index
-        DTYPE_t min_key
-
-    # exchange the root node with the last leaf node
-    _exchange_nodes(bheap, 0, node_idx)
-
-    # remove this element from the heap
-    min_key = bheap.elements[element_idx].key
-    bheap.elements[element_idx].state = SCANNED
-    bheap.elements[element_idx].node_idx = bheap.length
-    bheap.A[node_idx] = bheap.length
-    bheap.size -= 1
-
-    # reorder the tree elements from the root node
-    _min_heapify(bheap, 0)
-
-    return min_key
-
-
 cdef ssize_t _parent(ssize_t node_idx) nogil:
     """Get the parent node index.
 
