@@ -9,18 +9,14 @@
 """
 
 cimport cython
+
 import numpy as np
+
 cimport numpy as cnp
 from libc.stdlib cimport free, malloc
 
-from priority_queues.commons cimport (
-    ElementState, 
-    DTYPE_t, 
-    DTYPE_INF,
-    SCANNED,
-    NOT_IN_HEAP,
-    IN_HEAP
-)
+from priority_queues.commons cimport (DTYPE_INF, IN_HEAP, NOT_IN_HEAP, SCANNED,
+                                      DTYPE_t, ElementState)
 
 
 cdef struct Element:
