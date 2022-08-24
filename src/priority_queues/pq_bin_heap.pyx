@@ -18,6 +18,7 @@ from priority_queues.commons cimport (
     DTYPE_t
 )
 
+
 cdef void init_heap(
     BinaryHeap* bheap,
     ssize_t length) nogil:
