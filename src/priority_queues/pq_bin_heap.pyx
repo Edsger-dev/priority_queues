@@ -9,9 +9,7 @@
 """
 
 cimport cython
-
 import numpy as np
-
 cimport numpy as cnp
 from libc.stdlib cimport free, malloc
 
