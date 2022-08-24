@@ -1,6 +1,9 @@
 
+
+import numpy as np
+
 from priority_queues.commons cimport (DTYPE_INF, IN_HEAP, NOT_IN_HEAP, SCANNED,
-                                      DTYPE_t)
+                                      DTYPE_t, DTYPE)
 from priority_queues.pq_bin_heap cimport (BinaryHeap, extract_min, free_heap,
                                           init_heap, is_empty, min_heap_insert,
                                           peek, decrease_key_from_element_index)
@@ -10,7 +13,7 @@ cpdef init_01():
 
     cdef: 
         BinaryHeap bheap
-        size_t l = 4
+        ssize_t l = 4
 
     init_heap(&bheap, l)
 
@@ -197,3 +200,29 @@ cpdef decrease_key_from_element_index_01():
         assert bheap.elements[i].key == key_ref[i]
 
     free_heap(&bheap)
+
+
+cdef void heapsort(DTYPE_t[:] values_in, DTYPE_t[:] values_out) nogil:
+
+    cdef:
+        ssize_t i, l = <ssize_t>values_in.shape[0]
+        BinaryHeap bheap
+    
+    init_heap(&bheap, l)
+    for i in range(l):
+        min_heap_insert(&bheap, i, values_in[i])
+    for i in range(l):
+        values_out[i] = bheap.elements[extract_min(&bheap)].key
+    free_heap(&bheap)
+
+
+cpdef sort_01(int n, random_seed=124):
+    
+    cdef BinaryHeap bheap
+
+    np.random.seed(random_seed)
+    values_in = np.random.sample(size=n)
+    values_out = np.empty_like(values_in, dtype=DTYPE)
+    heapsort(values_in, values_out)
+    values_in_sorted = np.sort(values_in)
+    np.testing.assert_array_equal(values_in_sorted, values_out)
