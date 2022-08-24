@@ -8,9 +8,6 @@
     Tree elements also stored in a static array.
 """
 
-cimport cython
-import numpy as np
-cimport numpy as cnp
 from libc.stdlib cimport free, malloc
 
 from priority_queues.commons cimport (DTYPE_INF, IN_HEAP, NOT_IN_HEAP, SCANNED,
