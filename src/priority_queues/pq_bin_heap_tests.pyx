@@ -29,6 +29,28 @@ cpdef init_01():
 
 
 cpdef insert_01():
+    """ Testing a single insertion into an empty binary heap 
+    of length 1.
+    """
+
+    cdef: 
+        BinaryHeap bheap
+        DTYPE_t key
+
+    init_heap(&bheap, 1)
+    assert bheap.length == 1
+    key = 1.0
+    min_heap_insert(&bheap, 0, key)
+    assert bheap.size == 1
+    assert bheap.A[0] == 0
+    assert bheap.elements[0].key == key
+    assert bheap.elements[0].state == IN_HEAP
+    assert bheap.elements[0].node_idx == 0
+
+    free_heap(&bheap)
+
+
+cpdef insert_02():
 
     cdef: 
         BinaryHeap bheap
