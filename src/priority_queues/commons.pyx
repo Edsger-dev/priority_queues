@@ -1,4 +1,4 @@
 import numpy as np
 
 DTYPE = np.float64
-DTYPE_INFINITY = <DTYPE_t>np.finfo(dtype=DTYPE).max
+DTYPE_INF = <DTYPE_t>np.finfo(dtype=DTYPE).max

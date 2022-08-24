@@ -13,7 +13,14 @@ import numpy as np
 cimport numpy as cnp
 from libc.stdlib cimport free, malloc
 
-from priority_queues.commons cimport ElementState, DTYPE_t
+from priority_queues.commons cimport (
+    ElementState, 
+    DTYPE_t, 
+    DTYPE_INF,
+    SCANNED,
+    NOT_IN_HEAP,
+    IN_HEAP
+)
 
 
 cdef struct Element:
@@ -59,7 +66,7 @@ cdef void _initialize_element(
     * BinaryHeap* bheap : binary heap
     * ssize_t element_idx : index of the element in the element array
     """
-    bheap.elements[element_idx].key = INFINITY
+    bheap.elements[element_idx].key = DTYPE_INF
     bheap.elements[element_idx].state = NOT_IN_HEAP
     bheap.elements[element_idx].node_idx = bheap.length
 
@@ -91,7 +98,7 @@ cdef void min_heap_insert(
     assumptions
     ===========
     * the element bheap.elements[element_idx] is not in the heap
-    * its new key is smaller than INFINITY
+    * its new key is smaller than DTYPE_INF
     """
     cdef ssize_t node_idx = bheap.size
 
