@@ -16,20 +16,7 @@ cimport numpy as cnp
 from libc.stdlib cimport free, malloc
 
 from priority_queues.commons cimport (DTYPE_INF, IN_HEAP, NOT_IN_HEAP, SCANNED,
-                                      DTYPE_t, ElementState)
-
-
-cdef struct Element:
-    DTYPE_t key
-    ElementState state
-    ssize_t node_idx
-
-cdef struct BinaryHeap:
-    ssize_t length  # number of elements in the array
-    ssize_t size  # number of elements in the heap
-    ssize_t* A  # array storing the binary tree
-    Element* elements  # array storing the elements
-
+                                      DTYPE_t)
 
 cdef void init_heap(
     BinaryHeap* bheap,
