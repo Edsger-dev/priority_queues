@@ -110,6 +110,21 @@ cpdef insert_02():
 
     free_heap(&bheap)
 
+cpdef insert_03(n=4):
+    """ Inserting nodes with identical keys.
+    """
+    cdef: 
+        BinaryHeap bheap
+        ssize_t i
+        DTYPE_t key = 1.0
+
+    init_heap(&bheap, n)
+    for i in range(n):
+        min_heap_insert(&bheap, i, key)
+    for i in range(n):
+        assert bheap.A[i] == i
+
+    free_heap(&bheap)
 
 cpdef peek_01():
 
