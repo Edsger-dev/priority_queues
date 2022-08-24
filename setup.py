@@ -39,7 +39,10 @@ extensions = [
         ["src/priority_queues/pq_bin_heap.pyx"],
         extra_compile_args=extra_compile_args,
     ),
-    Extension("priority_queues.pq_bin_heap_tests", ["src/priority_queues/pq_bin_heap_tests.pyx"]),
+    Extension(
+        "priority_queues.pq_bin_heap_tests",
+        ["src/priority_queues/pq_bin_heap_tests.pyx"],
+    ),
 ]
 
 setup(
@@ -54,7 +57,9 @@ setup(
     package_data={
         "priority_queues.commons": ["src/priority_queues/commons.pxd"],
         "priority_queues.pq_bin_heap": ["src/priority_queues/pq_bin_heap.pxd"],
-        "priority_queues.pq_bin_heap_tests": ["src/priority_queues/pq_bin_heap_tests.pyx"],
+        "priority_queues.pq_bin_heap_tests": [
+            "src/priority_queues/pq_bin_heap_tests.pyx"
+        ],
     },
     ext_modules=cythonize(
         extensions,
