@@ -12,3 +12,6 @@ def test_peek_01():
 
 def test_extract_min_01():
 	extract_min_01()
+
+def test_is_empty_01():
+	is_empty_01()

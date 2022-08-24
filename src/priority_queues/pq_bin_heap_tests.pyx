@@ -5,7 +5,8 @@ from priority_queues.pq_bin_heap cimport (
     free_heap, 
     min_heap_insert, 
     peek, 
-    extract_min
+    extract_min,
+    is_empty
 )
 from priority_queues.commons cimport (
     DTYPE_INF, 
@@ -138,5 +139,19 @@ cpdef extract_min_01():
     idx = extract_min(&bheap)
     assert idx == 3
     assert bheap.size == 0
+
+    free_heap(&bheap)
+
+cpdef is_empty_01():
+    
+    cdef BinaryHeap bheap
+
+    init_heap(&bheap, 4)
+
+    assert is_empty(&bheap) == 1
+    min_heap_insert(&bheap, 1, 3.0)
+    assert is_empty(&bheap) == 0
+    idx = extract_min(&bheap)
+    assert is_empty(&bheap) == 1
 
     free_heap(&bheap)
