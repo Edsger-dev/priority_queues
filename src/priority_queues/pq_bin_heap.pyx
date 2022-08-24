@@ -186,6 +186,10 @@ cdef ssize_t _parent(ssize_t node_idx) nogil:
     =====
     ssize_t node_idx: node index
 
+    output
+    ======
+    * ssize_t : node index of parent
+
     assumption
     ==========
     * node_idx > 0
@@ -199,6 +203,10 @@ cdef ssize_t _left_child(ssize_t node_idx) nogil:
     input
     =====
     * ssize_t node_idx : node index
+
+    output
+    ======
+    * ssize_t : node index of left child
     """
     return 2 * node_idx + 1
 
@@ -209,6 +217,10 @@ cdef ssize_t _right_child(ssize_t node_idx) nogil:
     input
     =====
     * ssize_t node_idx : tree index
+
+    output
+    ======
+    * ssize_t : node index of right child
     """
     return 2 * (node_idx + 1)
 
@@ -284,6 +296,7 @@ cdef void _decrease_key_from_node_index(
     =====
     * BinaryHeap* bheap : binary heap
     * ssize_t node_idx : node index
+    * DTYPE_t key_new : new key value
 
     assumptions
     ===========
