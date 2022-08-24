@@ -10,8 +10,13 @@
 
 from libc.stdlib cimport free, malloc
 
-from priority_queues.commons cimport (DTYPE_INF, IN_HEAP, NOT_IN_HEAP, SCANNED,
-                                      DTYPE_t)
+from priority_queues.commons cimport (
+    DTYPE_INF, 
+    IN_HEAP, 
+    NOT_IN_HEAP, 
+    SCANNED,
+    DTYPE_t
+)
 
 cdef void init_heap(
     BinaryHeap* bheap,
