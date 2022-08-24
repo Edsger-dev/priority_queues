@@ -7,7 +7,7 @@ from Cython.Build import cythonize
 from setuptools import Extension, find_packages, setup
 
 requirements = ["cython", "numpy"]
-setup_requirements = ["cython", "numpy"]
+setup_requirements = ["cython", "numpy", "scipy"]
 test_requirements = ["pytest"]
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -43,6 +43,10 @@ extensions = [
         "priority_queues.pq_bin_heap_tests",
         ["src/priority_queues/pq_bin_heap_tests.pyx"],
     ),
+    Extension(
+        "priority_queues.shortest_path",
+        ["src/priority_queues/shortest_path.pyx"],
+    ),
 ]
 
 setup(
@@ -60,6 +64,7 @@ setup(
         "priority_queues.pq_bin_heap_tests": [
             "src/priority_queues/pq_bin_heap_tests.pyx"
         ],
+        "priority_queues.shortest_path": ["src/priority_queues/shortest_path.pxd"],
     },
     ext_modules=cythonize(
         extensions,
