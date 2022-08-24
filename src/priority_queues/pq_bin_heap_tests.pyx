@@ -1,6 +1,6 @@
 
 from priority_queues.pq_bin_heap cimport (BinaryHeap, init_heap, free_heap, 
-    min_heap_insert)
+    min_heap_insert, peek)
 from priority_queues.commons cimport (DTYPE_INF, DTYPE_t, IN_HEAP, NOT_IN_HEAP, 
     SCANNED)
 
@@ -71,4 +71,20 @@ cpdef insert_01():
     assert bheap.elements[2].state == IN_HEAP
     assert bheap.size == 4
 
+    free_heap(&bheap)
+
+
+cpdef peek_01():
+
+    cdef: 
+        BinaryHeap bheap
+
+    init_heap(&bheap, 6)
+    min_heap_insert(&bheap, 0, 9.0)
+    min_heap_insert(&bheap, 1, 9.0)
+    min_heap_insert(&bheap, 2, 9.0)
+    min_heap_insert(&bheap, 3, 5.0)
+    min_heap_insert(&bheap, 4, 3.0)
+    min_heap_insert(&bheap, 5, 1.0)
+    assert peek(&bheap) == 1
     free_heap(&bheap)

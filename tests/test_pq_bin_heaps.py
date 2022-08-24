@@ -6,3 +6,6 @@ def test_init_01():
 
 def test_insert_01():
 	insert_01()
+
+def test_peek_01():
+	peek_01()
