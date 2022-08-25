@@ -2,18 +2,18 @@ import pandas as pd
 import pytest
 from priority_queues.shortest_path import *
 
-# @pytest.fixture
-# def braess():
-#     """ Braess-like graph
-#     """
-#     edges_df = pd.DataFrame(
-#         data={
-#             "source": [0, 0, 1, 1, 2],
-#             "target": [1, 2, 2, 3, 3],
-#             "weight": [1.0, 2.0, 0.0, 2.0, 1.0],
-#         }
-#     )
-#     return edges_df
+
+@pytest.fixture
+def braess():
+    """Braess-like graph"""
+    edges_df = pd.DataFrame(
+        data={
+            "source": [0, 0, 1, 1, 2],
+            "target": [1, 2, 2, 3, 3],
+            "weight": [1.0, 2.0, 0.0, 2.0, 1.0],
+        }
+    )
+    return edges_df
 
 
 def test_check_edges_01():
@@ -65,3 +65,28 @@ def test_check_edges_03():
             edges_df,
             check_edges=True,
         )
+
+
+def test_check_edges_04(braess):
+
+    edges_df = braess
+
+    with pytest.raises(TypeError, match=r"pandas DataFrame"):
+        sp = ShortestPath("yeaaahhh!!!", check_edges=True)
+    with pytest.raises(KeyError, match=r"not found in graph edges dataframe"):
+        sp = ShortestPath(edges_df, source="tail", check_edges=True)
+    with pytest.raises(KeyError, match=r"not found in graph edges dataframe"):
+        sp = ShortestPath(edges_df, target="head", check_edges=True)
+    with pytest.raises(KeyError, match=r"not found in graph edges dataframe"):
+        sp = ShortestPath(edges_df, weight="cost", check_edges=True)
+    with pytest.raises(ValueError, match=r"missing value"):
+        sp = ShortestPath(edges_df.replace(0, np.nan), check_edges=True)
+    with pytest.raises(TypeError, match=r"should be of integer type"):
+        sp = ShortestPath(edges_df.astype({"source": float}), check_edges=True)
+    with pytest.raises(TypeError, match=r"should be of numeric type"):
+        sp = ShortestPath(edges_df.astype({"weight": str}), check_edges=True)
+
+
+# def test_check_edges_05():
+
+#     edges_df = braess
