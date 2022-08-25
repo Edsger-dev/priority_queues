@@ -44,7 +44,7 @@ extensions = [
     ),
     Extension(
         "priority_queues.shortest_path",
-        ["src/priority_queues/shortest_path.pyx"],
+        ["src/priority_queues/dijkstra.pyx"],
     ),
 ]
 
@@ -60,10 +60,6 @@ setup(
     package_data={
         "priority_queues.commons": ["src/priority_queues/commons.pxd"],
         "priority_queues.pq_bin_heap": ["src/priority_queues/pq_bin_heap.pxd"],
-        "priority_queues.pq_bin_heap_tests": [
-            "src/priority_queues/pq_bin_heap_tests.pyx"
-        ],
-        "priority_queues.shortest_path": ["src/priority_queues/shortest_path.pxd"],
     },
     ext_modules=cythonize(
         extensions,
