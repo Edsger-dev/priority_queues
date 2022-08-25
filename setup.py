@@ -1,13 +1,12 @@
 import os
 import re
-from codecs import open  # To use a consistent encoding
 
 import numpy
 from Cython.Build import cythonize
 from setuptools import Extension, find_packages, setup
 
-requirements = ["cython", "numpy"]
-setup_requirements = ["cython", "numpy", "scipy"]
+requirements = ["cython", "numpy", "scipy"]
+setup_requirements = ["cython", "numpy"]
 test_requirements = ["pytest"]
 
 here = os.path.abspath(os.path.dirname(__file__))
