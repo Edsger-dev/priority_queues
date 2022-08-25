@@ -8,10 +8,11 @@
     Tree elements also stored in a static array.
 """
 
+from cython.parallel import prange
 from libc.stdlib cimport free, malloc
 
 from priority_queues.commons cimport (DTYPE_INF, IN_HEAP, NOT_IN_HEAP, SCANNED,
-                                      DTYPE_t)
+                                      DTYPE_t, N_THREADS)
 
 
 cdef void init_heap(
@@ -24,12 +25,14 @@ cdef void init_heap(
     * BinaryHeap* bheap : binary heap
     * ssize_t length : length (maximum size) of the heap
     """
-    cdef ssize_t i
+    cdef: 
+        ssize_t i
 
     bheap.length = length
     bheap.size = 0
     bheap.A = <ssize_t*> malloc(length * sizeof(ssize_t))
     bheap.elements = <Element*> malloc(length * sizeof(Element))
+
     for i in range(length):
         bheap.A[i] = length
         _initialize_element(bheap, i)

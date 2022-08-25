@@ -43,7 +43,7 @@ extensions = [
         ["src/priority_queues/pq_bin_heap_tests.pyx"],
     ),
     Extension(
-        "priority_queues.shortest_path",
+        "priority_queues.dijkstra",
         ["src/priority_queues/dijkstra.pyx"],
     ),
 ]

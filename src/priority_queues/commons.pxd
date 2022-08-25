@@ -9,3 +9,5 @@ cdef enum ElementState:
    SCANNED = 1
    NOT_IN_HEAP = 2
    IN_HEAP = 3
+
+cdef int N_THREADS

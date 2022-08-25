@@ -5,10 +5,7 @@ import numpy as np
 import pandas as pd
 from scipy.sparse import csc_matrix, csr_matrix
 
-# from priority_queues.dijkstra import (
-#     convert_sorted_graph_to_csr,
-#     # convert_sorted_graph_to_csc,
-#     # path_length_from,
+from priority_queues.dijkstra import path_length_from
 # )
 from priority_queues.commons import DTYPE_PY, Timer
 
@@ -245,31 +242,31 @@ class ShortestPath:
         t.stop()
         self.time["check the source/target vertex"] = t.interval
 
-    #     # compute path length
-    #     t = Timer()
-    #     t.start()
-    #     if self._orientation == "one-to-all":
-    #         path_lengths = path_length_from(
-    #             self._head_vert,
-    #             self._indptr,
-    #             self._edge_weights,
-    #             vertex_new,
-    #             self.n_vertices,
-    #             n_jobs=-1,
-    #         )
-    #     t.stop()
-    #     self.time["compute path length"] = t.interval
+        # compute path length
+        t = Timer()
+        t.start()
+        if self._orientation == "one-to-all":
+            path_lengths = path_length_from(
+                self._head_vert,
+                self._indptr,
+                self._edge_weights,
+                vertex_new,
+                self.n_vertices,
+                n_jobs=-1,
+            )
+        t.stop()
+        self.time["compute path length"] = t.interval
 
-    #     # reorder results
-    #     t = Timer()
-    #     t.start()
-    #     self._vertices["path_length"] = path_lengths
-    #     path_length = self._vertices[
-    #         ["vert_idx_old", "path_length"]
-    #     ].sort_values(by="vert_idx_old")
-    #     path_length.set_index("vert_idx_old", drop=True, inplace=True)
-    #     path_length.rename_axis(None, inplace=True)
-    #     t.stop()
-    #     self.time["reorder results"] = t.interval
+        # reorder results
+        t = Timer()
+        t.start()
+        self._vertices["path_length"] = path_lengths
+        path_length = self._vertices[
+            ["vert_idx_old", "path_length"]
+        ].sort_values(by="vert_idx_old")
+        path_length.set_index("vert_idx_old", drop=True, inplace=True)
+        path_length.rename_axis(None, inplace=True)
+        t.stop()
+        self.time["reorder results"] = t.interval
 
-    #     return path_length
+        return path_length
