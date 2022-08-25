@@ -42,7 +42,7 @@ path_lengths = sp.run(vertex_idx=0)
 assert (path_lengths.values == result_ref).all()
 
 # timings
+timings = pd.DataFrame.from_dict(sp.time, orient="index", columns=["elapsed_time_s"])
+print(timings)
 
-
-# print(sp.time)
 print("done")
