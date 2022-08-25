@@ -5,7 +5,7 @@ import numpy
 from Cython.Build import cythonize
 from setuptools import Extension, find_packages, setup
 
-requirements = ["cython", "numpy", "scipy"]
+requirements = ["cython", "numpy", "pandas", "scipy"]
 setup_requirements = ["cython", "numpy"]
 test_requirements = ["pytest"]
 
