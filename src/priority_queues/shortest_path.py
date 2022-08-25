@@ -229,15 +229,15 @@ class ShortestPath:
                 f"orientation should be either 'one-to-all' or 'all-to-one'"
             )
 
-    def run(self, vertex):
+    def run(self, vertex_idx):
 
         # check the source/target vertex
         t = Timer()
         t.start()
-        if vertex not in self._vertices.vert_idx_old.values:
-            raise ValueError(f"vertex {vertex} not found in graph")
+        if vertex_idx not in self._vertices.vert_idx_old.values:
+            raise ValueError(f"vertex {vertex_idx} not found in graph")
         vertex_new = self._vertices.loc[
-            self._vertices.vert_idx_old == vertex, "vert_idx_new"
+            self._vertices.vert_idx_old == vertex_idx, "vert_idx_new"
         ]
         t.stop()
         self.time["check the source/target vertex"] = t.interval
@@ -261,12 +261,13 @@ class ShortestPath:
         t = Timer()
         t.start()
         self._vertices["path_length"] = path_lengths
-        path_length = self._vertices[
+        path_lengths_df = self._vertices[
             ["vert_idx_old", "path_length"]
         ].sort_values(by="vert_idx_old")
-        path_length.set_index("vert_idx_old", drop=True, inplace=True)
-        path_length.rename_axis(None, inplace=True)
+        path_lengths_df.set_index("vert_idx_old", drop=True, inplace=True)
+        path_lengths_df.index.name = "vertex_idx"
+        path_lengths_series = path_lengths_df.path_length
         t.stop()
         self.time["reorder results"] = t.interval
 
-        return path_length
+        return path_lengths_series
