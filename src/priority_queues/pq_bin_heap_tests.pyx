@@ -2,11 +2,12 @@
 
 import numpy as np
 
-from priority_queues.commons cimport (DTYPE_INF, IN_HEAP, NOT_IN_HEAP, SCANNED,
-                                      DTYPE_t, DTYPE)
-from priority_queues.pq_bin_heap cimport (BinaryHeap, extract_min, free_heap,
-                                          init_heap, is_empty, min_heap_insert,
-                                          peek, decrease_key_from_element_index)
+from priority_queues.commons cimport (DTYPE, DTYPE_INF, IN_HEAP, NOT_IN_HEAP,
+                                      SCANNED, DTYPE_t)
+from priority_queues.pq_bin_heap cimport (BinaryHeap,
+                                          decrease_key_from_element_index,
+                                          extract_min, free_heap, init_heap,
+                                          is_empty, min_heap_insert, peek)
 
 
 cpdef init_01():

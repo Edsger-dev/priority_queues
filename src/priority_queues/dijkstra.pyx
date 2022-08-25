@@ -3,39 +3,12 @@
 
 # cimport numpy as cnp
 import numpy as np
-from scipy.sparse import csr_matrix
 
 # from priority_queues.pq_bin_heap cimport *
 # from priority_queues.commons cimport DTYPE, DTYPE_t, SCANNED, NOT_IN_HEAP
 
 
-cpdef convert_sorted_graph_to_csr(
-    tail_vertices,
-    head_vertices,
-    vertex_count):
-    """ Compute the CSR representation of the node-node adjacency matrix of the 
-    graph.
 
-    input
-    =====
-    * np.uint tail_vertices : tail vertices of the edges
-    * np.uint head_vertices : head verices of the edges
-    * int vertex_count : number of edges
-
-    assumption
-    ==========
-    * edges are sorted by tail vertices first and head vertices second and 
-      and edges have been reindexed
-    """
-
-    edge_count = head_vertices.shape[0]
-    data = np.ones(edge_count, dtype=np.uint)
-    csr_mat = csr_matrix(
-        (data, (tail_vertices, head_vertices)),
-        shape=(vertex_count, vertex_count),
-        dtype=np.uint)
-
-    return csr_mat.indptr
 
 
 # cpdef cnp.ndarray path_length_from(
@@ -46,6 +19,8 @@ cpdef convert_sorted_graph_to_csr(
 #     UITYPE_t n_vertices,
 #     int n_jobs=-1):
 #     """ Compute single-source shortest path (from one vertex to all vertices).
+
+#        Does not return predecessors
 #     """
 
 #     cdef:
@@ -95,3 +70,5 @@ cpdef convert_sorted_graph_to_csr(
 #     free_heap(&bheap)  # cleanup
 
 #     return path_lengths
+
+
