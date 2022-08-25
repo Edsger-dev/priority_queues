@@ -87,6 +87,10 @@ def test_check_edges_04(braess):
         sp = ShortestPath(edges_df.astype({"weight": str}), check_edges=True)
 
 
-# def test_check_edges_05():
+def test_check_edges_05(braess):
 
-#     edges_df = braess
+    edges_df = braess
+    sp = ShortestPath(edges_df, check_edges=True)
+    assert (sp._head_vert == [1, 2, 2, 3, 3]).all()
+    assert (sp._indptr == [0, 2, 4, 5, 5]).all()
+    assert (sp._edge_weights == [1.0, 2.0, 0.0, 2.0, 1.0]).all()
