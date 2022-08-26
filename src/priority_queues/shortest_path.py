@@ -3,12 +3,11 @@
 
 import numpy as np
 import pandas as pd
-from scipy.sparse import csc_matrix, csr_matrix, coo_array
-
-from priority_queues.dijkstra import path_length_from
+from scipy.sparse import coo_array, csc_matrix, csr_matrix
 
 # )
 from priority_queues.commons import DTYPE_PY, Timer
+from priority_queues.dijkstra import path_length_from
 
 
 def convert_sorted_graph_to_csr(edges_df, source, target, weight, vertex_count):
@@ -100,12 +99,16 @@ class ShortestPath:
         self._check_orientation(orientation)
         self._orientation = orientation
         if self._orientation == "one-to-all":
-            graph_csr = convert_sorted_graph_to_csr(self._edges,  source, target, weight, self.n_vertices)
+            graph_csr = convert_sorted_graph_to_csr(
+                self._edges, source, target, weight, self.n_vertices
+            )
             self._indices = graph_csr.indices.astype(np.intp)
             self._indptr = graph_csr.indptr.astype(np.intp)
             self._edge_weights = graph_csr.data
         else:
-            graph_csc = convert_sorted_graph_to_csc(self._edges,  source, target, weight, self.n_vertices)
+            graph_csc = convert_sorted_graph_to_csc(
+                self._edges, source, target, weight, self.n_vertices
+            )
             self._indices = graph_csc.indices.astype(np.intp)
             self._indptr = graph_csc.indptr.astype(np.intp)
             self._edge_weights = graph_csc.data
