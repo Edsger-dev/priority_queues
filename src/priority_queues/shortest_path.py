@@ -3,63 +3,55 @@
 
 import numpy as np
 import pandas as pd
-from scipy.sparse import csc_matrix, csr_matrix
+from scipy.sparse import csc_matrix, csr_matrix, coo_array
 
 from priority_queues.dijkstra import path_length_from
+
 # )
 from priority_queues.commons import DTYPE_PY, Timer
 
 
-def convert_sorted_graph_to_csr(tail_vertices, head_vertices, vertex_count):
+def convert_sorted_graph_to_csr(edges_df, source, target, weight, vertex_count):
     """Compute the CSR representation of the node-node adjacency matrix of the
     graph.
 
     input
     =====
-    * int tail_vertices : tail vertices of the edges
-    * int head_vertices : head verices of the edges
+    * TODO
     * int vertex_count : number of edges
 
-    assumption
-    ==========
-    * edges are sorted by tail vertices first and head vertices second and
-      and edges have been reindexed
+    output
+    ======
+    * TODO
     """
 
-    edge_count = head_vertices.shape[0]
-    data = np.ones(edge_count, dtype=np.intp)
-    csr_mat = csr_matrix(
-        (data, (tail_vertices, head_vertices)),
-        shape=(vertex_count, vertex_count),
-        dtype=np.intp,
-    )
+    data = edges_df[weight].values
+    row = edges_df[source].values
+    col = edges_df[target].values
+    graph_coo = coo_array((data, (row, col)), shape=(vertex_count, vertex_count))
+    graph_csr = graph_coo.tocsr()
 
-    return csr_mat.indptr.astype(np.intp)
+    return graph_csr
 
 
-def convert_sorted_graph_to_csc(tail_vertices, head_vertices, vertex_count):
+def convert_sorted_graph_to_csc(edges_df, source, target, weight, vertex_count):
     """Compute the CSC representation of the node-node adjacency matrix of the
     graph.
 
     input
     =====
-    * int tail_vertices : tail vertices of the edges
-    * int head_vertices : head verices of the edges
+    * TODO
     * int vertex_count : number of edges
 
-    assumption
-    ==========
-    * edges are sorted by head vertices first and tail vertices second and
-      and edges have been reindexed
+    output
+    ======
+    * TODO
     """
 
-    edge_count = head_vertices.shape[0]
-    data = np.ones(edge_count, dtype=np.intp)
-    csc_mat = csc_matrix(
-        (data, (tail_vertices, head_vertices)),
-        shape=(vertex_count, vertex_count),
-        dtype=np.intp,
-    )
+    data = edges_df[weight].values
+    row = edges_df[source].values
+    col = edges_df[target].values
+    graph_coo = coo_array((data, (row, col)), shape=(vertex_count, vertex_count))
 
     return csc_mat.indptr.astype(np.intp)
 
@@ -74,6 +66,7 @@ class ShortestPath:
         orientation="one-to-all",
         check_edges=True,
     ):
+        """TODO : check if we need to deep copy edges_df"""
         self.time = {}
 
         t = Timer()
@@ -94,22 +87,10 @@ class ShortestPath:
         t.stop()
         self.time["reindex the vertices"] = t.interval
 
-        # sort the edges
+        # cast the weight types
         t = Timer()
         t.start()
-        if orientation == "one-to-all":
-            self._edges.sort_values(by=[source, target], inplace=True)
-        else:
-            self._edges.sort_values(by=[target, source], inplace=True)
-        t.stop()
-        self.time["sort the edges"] = t.interval
-
-        # cast the types
-        t = Timer()
-        t.start()
-        self._tail_vert = self._edges[source].values
-        self._head_vert = self._edges[target].values
-        self._edge_weights = self._edges[weight].values.astype(DTYPE_PY)
+        self._edges[weight] = self._edges[weight].astype(DTYPE_PY)
         t.stop()
         self.time["cast the types"] = t.interval
 
@@ -119,15 +100,15 @@ class ShortestPath:
         self._check_orientation(orientation)
         self._orientation = orientation
         if self._orientation == "one-to-all":
-            self._indptr = convert_sorted_graph_to_csr(
-                self._tail_vert, self._head_vert, self.n_vertices
-            )
-            del self._tail_vert
+            graph_csr = convert_sorted_graph_to_csr(self._edges,  source, target, weight, self.n_vertices)
+            self._indices = graph_csr.indices.astype(np.intp)
+            self._indptr = graph_csr.indptr.astype(np.intp)
+            self._edge_weights = graph_csr.data
         else:
-            self._indptr = convert_sorted_graph_to_csc(
-                self._tail_vert, self._head_vert, self.n_vertices
-            )
-            del self._head_vert
+            graph_csc = convert_sorted_graph_to_csc(self._edges,  source, target, weight, self.n_vertices)
+            self._indices = graph_csc.indices.astype(np.intp)
+            self._indptr = graph_csc.indptr.astype(np.intp)
+            self._edge_weights = graph_csc.data
             raise NotImplementedError("one-to_all shortest path not implemented yet")
         t.stop()
         self.time["convert to CSR/CSC"] = t.interval
@@ -247,7 +228,7 @@ class ShortestPath:
         t.start()
         if self._orientation == "one-to-all":
             path_lengths = path_length_from(
-                self._head_vert,
+                self._indices,
                 self._indptr,
                 self._edge_weights,
                 vertex_new,
@@ -261,9 +242,9 @@ class ShortestPath:
         t = Timer()
         t.start()
         self._vertices["path_length"] = path_lengths
-        path_lengths_df = self._vertices[
-            ["vert_idx_old", "path_length"]
-        ].sort_values(by="vert_idx_old")
+        path_lengths_df = self._vertices[["vert_idx_old", "path_length"]].sort_values(
+            by="vert_idx_old"
+        )
         path_lengths_df.set_index("vert_idx_old", drop=True, inplace=True)
         path_lengths_df.index.name = "vertex_idx"
         path_lengths_series = path_lengths_df.path_length
