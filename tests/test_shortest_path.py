@@ -1,10 +1,9 @@
 import numpy as np
 import pandas as pd
 import pytest
+from priority_queues.shortest_path import *
 from scipy.sparse import coo_array, csr_matrix
 from scipy.sparse.csgraph import dijkstra
-
-from priority_queues.shortest_path import *
 
 
 @pytest.fixture
@@ -99,26 +98,28 @@ def test_check_edges_05(braess):
     assert (sp._indptr == [0, 2, 4, 5, 5]).all()
     assert (sp._edge_weights == [1.0, 2.0, 0.0, 2.0, 1.0]).all()
 
+
 def test_run_01(braess):
 
     edges_df = braess
     sp = ShortestPath(edges_df, orientation="one-to-all", check_edges=False)
     path_lengths = sp.run(vertex_idx=0)
-    path_lengths_ref = pd.Series([0., 1., 1., 2.0])
-    path_lengths_ref.index.name = 'vertex_idx'
-    path_lengths_ref.name = 'path_length'
+    path_lengths_ref = pd.Series([0.0, 1.0, 1.0, 2.0])
+    path_lengths_ref.index.name = "vertex_idx"
+    path_lengths_ref.name = "path_length"
     pd.testing.assert_series_equal(path_lengths, path_lengths_ref)
+
 
 def test_run_02(random_seed=124, n=1000):
 
-    source = np.random.randint(0, int(n/5), n)
-    target = np.random.randint(0, int(n/5), n)
+    source = np.random.randint(0, int(n / 5), n)
+    target = np.random.randint(0, int(n / 5), n)
     weight = np.random.rand(n)
-    edges_df = pd.DataFrame(data={'source': source, 'target': target, 'weight': weight})
-    edges_df.drop_duplicates(subset=['source', 'target'], inplace=True)
-    edges_df = edges_df.loc[edges_df['source'] != edges_df['target']]
+    edges_df = pd.DataFrame(data={"source": source, "target": target, "weight": weight})
+    edges_df.drop_duplicates(subset=["source", "target"], inplace=True)
+    edges_df = edges_df.loc[edges_df["source"] != edges_df["target"]]
     edges_df.reset_index(drop=True, inplace=True)
-    vertex_count = edges_df[['source', 'target']].max().max() + 1
+    vertex_count = edges_df[["source", "target"]].max().max() + 1
 
     data = edges_df["weight"].values
     row = edges_df["source"].values
@@ -140,4 +141,3 @@ def test_run_02(random_seed=124, n=1000):
     path_lengths = sp.run(vertex_idx=0)
 
     np.testing.assert_array_almost_equal(path_lengths.values, dist_matrix, decimal=3)
-
