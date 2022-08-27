@@ -1,5 +1,9 @@
+import numpy as np
 import pandas as pd
 import pytest
+from scipy.sparse import coo_array, csr_matrix
+from scipy.sparse.csgraph import dijkstra
+
 from priority_queues.shortest_path import *
 
 
@@ -104,3 +108,36 @@ def test_run_01(braess):
     path_lengths_ref.index.name = 'vertex_idx'
     path_lengths_ref.name = 'path_length'
     pd.testing.assert_series_equal(path_lengths, path_lengths_ref)
+
+def test_run_02(random_seed=124, n=1000):
+
+    source = np.random.randint(0, int(n/5), n)
+    target = np.random.randint(0, int(n/5), n)
+    weight = np.random.rand(n)
+    edges_df = pd.DataFrame(data={'source': source, 'target': target, 'weight': weight})
+    edges_df.drop_duplicates(subset=['source', 'target'], inplace=True)
+    edges_df = edges_df.loc[edges_df['source'] != edges_df['target']]
+    edges_df.reset_index(drop=True, inplace=True)
+    vertex_count = edges_df[['source', 'target']].max().max() + 1
+
+    data = edges_df["weight"].values
+    row = edges_df["source"].values
+    col = edges_df["target"].values
+    graph_coo = coo_array((data, (row, col)), shape=(vertex_count, vertex_count))
+    graph_csr = graph_coo.tocsr()
+
+    # SciPy
+    dist_matrix = dijkstra(
+        csgraph=graph_csr, directed=True, indices=0, return_predecessors=False
+    )
+
+    # In-house
+    sp = ShortestPath(
+        edges_df,
+        orientation="one-to-all",
+        check_edges=False,
+    )
+    path_lengths = sp.run(vertex_idx=0)
+
+    np.testing.assert_array_almost_equal(path_lengths.values, dist_matrix, decimal=3)
+
