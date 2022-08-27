@@ -16,7 +16,10 @@ def convert_sorted_graph_to_csr(edges_df, source, target, weight, vertex_count):
 
     input
     =====
-    * TODO
+    * pd.DataFrame edges_df :  edge dataframe
+    * str source : name of the source column
+    * str target : name of the target column
+    * str weight : name of the weight column
     * int vertex_count : number of edges
 
     output
@@ -39,7 +42,10 @@ def convert_sorted_graph_to_csc(edges_df, source, target, weight, vertex_count):
 
     input
     =====
-    * TODO
+    * pd.DataFrame edges_df :  edge dataframe
+    * str source : name of the source column
+    * str target : name of the target column
+    * str weight : name of the weight column
     * int vertex_count : number of edges
 
     output
