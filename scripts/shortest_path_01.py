@@ -18,7 +18,7 @@ graph = np.array(
 graph = csr_matrix(graph)
 
 dist_matrix = dijkstra(
-    csgraph=graph, directed=False, indices=0, return_predecessors=False
+    csgraph=graph, directed=True, indices=0, return_predecessors=False
 )
 
 assert (dist_matrix == result_ref).all()
