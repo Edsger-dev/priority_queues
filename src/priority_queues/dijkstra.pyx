@@ -10,7 +10,7 @@ from priority_queues.commons cimport (DTYPE, N_THREADS, NOT_IN_HEAP, SCANNED,
                                       DTYPE_t)
 from priority_queues.pq_bin_heap cimport (BinaryHeap,
                                           decrease_key_from_element_index,
-                                          extract_min, free_heap, init_heap,
+                                          extract_min, free_heap, init_heap_para,
                                           min_heap_insert)
 
 
@@ -24,7 +24,7 @@ cpdef cnp.ndarray path_length_from(
     int n_jobs=-1):
     """ Compute single-source shortest path (from one vertex to all vertices).
 
-       Does not return predecessors
+       Does not return predecessors.
     """
 
     cdef:
@@ -40,7 +40,7 @@ cpdef cnp.ndarray path_length_from(
 
     # initialization (the priority queue is filled with all nodes)
     # all nodes of INFINITY key
-    init_heap(&bheap, vertex_count) # TODO PARALLEL, num_threads
+    init_heap_para(&bheap, vertex_count, num_threads)
 
     # the key is set to zero for the origin vertex
     min_heap_insert(&bheap, origin_vert, 0.0)
