@@ -1,6 +1,3 @@
-# TODO : argument permute_graph bool?
-# QUESTION : maybe there can be a loop in the graph?
-
 import numpy as np
 import pandas as pd
 from scipy.sparse import coo_array, csc_matrix, csr_matrix
@@ -24,7 +21,7 @@ def convert_sorted_graph_to_csr(edges_df, source, target, weight, vertex_count):
 
     output
     ======
-    * TODO
+    * scipy.sparse._arrays.csr_array
     """
 
     data = edges_df[weight].values
@@ -50,7 +47,7 @@ def convert_sorted_graph_to_csc(edges_df, source, target, weight, vertex_count):
 
     output
     ======
-    * TODO
+    * scipy.sparse._arrays.csc_array
     """
 
     data = edges_df[weight].values
@@ -71,7 +68,6 @@ class ShortestPath:
         orientation="one-to-all",
         check_edges=True,
     ):
-        """TODO : check if we need to deep copy edges_df"""
         self.time = {}
 
         t = Timer()
@@ -79,7 +75,7 @@ class ShortestPath:
         # load the edges
         if check_edges:
             self._check_edges(edges_df, source, target, weight)
-        self._edges = edges_df[[source, target, weight]]
+        self._edges = edges_df[[source, target, weight]].copy(deep=True)
         self.n_edges = len(self._edges)
         t.stop()
         self.time["load the edges"] = t.interval
