@@ -7,7 +7,8 @@ from priority_queues.commons cimport (DTYPE, DTYPE_INF, IN_HEAP, NOT_IN_HEAP,
 from priority_queues.pq_bin_heap cimport (BinaryHeap,
                                           decrease_key_from_element_index,
                                           extract_min, free_heap, init_heap,
-                                          is_empty, min_heap_insert, peek)
+                                          init_heap_para, is_empty, 
+                                          min_heap_insert, peek)
 
 
 cpdef init_01():
@@ -17,6 +18,25 @@ cpdef init_01():
         ssize_t l = 4
 
     init_heap(&bheap, l)
+
+    assert bheap.length == l
+    assert bheap.size == 0
+    for i in range(l):
+        assert bheap.A[i] == bheap.length
+        assert bheap.elements[i].key == DTYPE_INF
+        assert bheap.elements[i].state == NOT_IN_HEAP
+        assert bheap.elements[i].node_idx == bheap.length
+
+    free_heap(&bheap)
+
+
+cpdef init_02():
+
+    cdef: 
+        BinaryHeap bheap
+        ssize_t l = 40
+
+    init_heap_para(&bheap, l, 4)
 
     assert bheap.length == l
     assert bheap.size == 0

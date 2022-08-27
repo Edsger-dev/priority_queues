@@ -14,6 +14,7 @@ cdef struct BinaryHeap:
     Element* elements  # array storing the elements
 
 cdef void init_heap(BinaryHeap*, ssize_t) nogil
+cdef void init_heap_para(BinaryHeap*, ssize_t, int) nogil
 cdef void free_heap(BinaryHeap*) nogil
 cdef void min_heap_insert(BinaryHeap*, ssize_t, DTYPE_t) nogil
 cdef DTYPE_t peek(BinaryHeap*) nogil

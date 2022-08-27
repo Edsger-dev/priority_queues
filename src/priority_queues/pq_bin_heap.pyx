@@ -16,6 +16,8 @@ from priority_queues.commons cimport (DTYPE_INF, IN_HEAP, N_THREADS,
                                       NOT_IN_HEAP, SCANNED, DTYPE_t)
 
 
+
+
 cdef void init_heap(
     BinaryHeap* bheap,
     ssize_t length) nogil:
@@ -35,6 +37,35 @@ cdef void init_heap(
     bheap.elements = <Element*> malloc(length * sizeof(Element))
 
     for i in range(length):
+        bheap.A[i] = length
+        _initialize_element(bheap, i)
+
+
+cdef void init_heap_para(
+    BinaryHeap* bheap,
+    ssize_t length,
+    int num_threads) nogil:
+    """Initialize the binary heap with a parallel loop.
+
+    input
+    =====
+    * BinaryHeap* bheap : binary heap
+    * ssize_t length : length (maximum size) of the heap
+    * int num_threads :  number of threads for the parallel job
+    """
+    cdef: 
+        ssize_t i
+
+    bheap.length = length
+    bheap.size = 0
+    bheap.A = <ssize_t*> malloc(length * sizeof(ssize_t))
+    bheap.elements = <Element*> malloc(length * sizeof(Element))
+
+    for i in prange(
+        length, 
+        schedule='static', 
+        nogil=True, 
+        num_threads=num_threads):
         bheap.A[i] = length
         _initialize_element(bheap, i)
 
