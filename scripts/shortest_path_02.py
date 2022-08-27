@@ -13,4 +13,5 @@ row = edges_df["tail"].values
 col = edges_df["head"].values
 graph_coo = coo_array((data, (row, col)), shape=(vertex_count, vertex_count))
 graph_csr = graph_coo.tocsr()
+
 print(graph_csr)
