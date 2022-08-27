@@ -119,15 +119,14 @@ def test_run_02(random_seed=124, n=1000):
     edges_df.drop_duplicates(subset=["source", "target"], inplace=True)
     edges_df = edges_df.loc[edges_df["source"] != edges_df["target"]]
     edges_df.reset_index(drop=True, inplace=True)
-    vertex_count = edges_df[["source", "target"]].max().max() + 1
 
+    # SciPy
+    vertex_count = edges_df[["source", "target"]].max().max() + 1
     data = edges_df["weight"].values
     row = edges_df["source"].values
     col = edges_df["target"].values
     graph_coo = coo_array((data, (row, col)), shape=(vertex_count, vertex_count))
     graph_csr = graph_coo.tocsr()
-
-    # SciPy
     dist_matrix = dijkstra(
         csgraph=graph_csr, directed=True, indices=0, return_predecessors=False
     )
@@ -136,8 +135,8 @@ def test_run_02(random_seed=124, n=1000):
     sp = ShortestPath(
         edges_df,
         orientation="one-to-all",
-        check_edges=False,
+        check_edges=True,
     )
     path_lengths = sp.run(vertex_idx=0)
 
-    np.testing.assert_array_almost_equal(path_lengths.values, dist_matrix, decimal=3)
+    np.testing.assert_array_almost_equal(path_lengths.values, dist_matrix, decimal=2)
