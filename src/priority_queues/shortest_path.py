@@ -67,7 +67,7 @@ class ShortestPath:
         weight="weight",
         orientation="one-to-all",
         check_edges=True,
-        permute=False
+        permute=False,
     ):
         self.time = {}
 
@@ -258,9 +258,9 @@ class ShortestPath:
         t.start()
         if self._permute:
             self._vertices["path_length"] = path_lengths
-            path_lengths_df = self._vertices[["vert_idx_old", "path_length"]].sort_values(
-                by="vert_idx_old"
-            )
+            path_lengths_df = self._vertices[
+                ["vert_idx_old", "path_length"]
+            ].sort_values(by="vert_idx_old")
             path_lengths_df.set_index("vert_idx_old", drop=True, inplace=True)
             path_lengths_df.index.name = "vertex_idx"
             path_lengths_series = path_lengths_df.path_length
