@@ -7,7 +7,7 @@ from priority_queues.commons cimport (DTYPE, DTYPE_INF, IN_HEAP, NOT_IN_HEAP,
 from priority_queues.pq_bin_heap cimport (BinaryHeap,
                                           decrease_key_from_element_index,
                                           extract_min, free_heap, init_heap,
-                                          init_heap_para, is_empty, 
+                                          init_heap_para, is_empty,
                                           min_heap_insert, peek)
 
 

@@ -6,12 +6,12 @@ cimport numpy as cnp
 
 import numpy as np
 
-from priority_queues.commons cimport (DTYPE, N_THREADS, NOT_IN_HEAP, SCANNED,
-                                      DTYPE_t)
+from priority_queues.commons cimport (DTYPE, DTYPE_INF, N_THREADS, NOT_IN_HEAP,
+                                      SCANNED, DTYPE_t)
 from priority_queues.pq_bin_heap cimport (BinaryHeap,
                                           decrease_key_from_element_index,
-                                          extract_min, free_heap, init_heap_para,
-                                          min_heap_insert)
+                                          extract_min, free_heap,
+                                          init_heap_para, min_heap_insert)
 
 
 # TODO try csr_indices: sszie_t[::1]
@@ -72,6 +72,8 @@ cpdef cnp.ndarray path_length_from(
         nogil=True, 
         num_threads=num_threads):
         path_lengths_view[i] = bheap.elements[i].key 
+
+    # path_lengths = np.where(path_lengths == DTYPE_INF, np.inf, path_lengths)
 
     free_heap(&bheap)  # cleanup
 
