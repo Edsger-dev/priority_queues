@@ -20,7 +20,7 @@ cpdef cnp.ndarray path_length_from(
     ssize_t[:] csr_indptr,
     DTYPE_t[:] edge_weights,
     int origin_vert_in,
-    ssize_t vertex_count,
+    int vertex_count,
     int n_jobs=-1):
     """ Compute single-source shortest path (from one vertex to all vertices).
 
@@ -40,7 +40,7 @@ cpdef cnp.ndarray path_length_from(
 
     # initialization (the priority queue is filled with all nodes)
     # all nodes of INFINITY key
-    init_heap_para(&bheap, vertex_count, num_threads)
+    init_heap_para(&bheap, <ssize_t>vertex_count, num_threads)
 
     # the key is set to zero for the origin vertex
     min_heap_insert(&bheap, origin_vert, 0.0)
