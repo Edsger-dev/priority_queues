@@ -1,9 +1,11 @@
 import numpy as np
 import pandas as pd
 import pytest
-from priority_queues.shortest_path import *
 from scipy.sparse import coo_array, csr_matrix
 from scipy.sparse.csgraph import dijkstra
+
+from priority_queues.commons import DTYPE_INF_PY
+from priority_queues.shortest_path import *
 
 
 @pytest.fixture
@@ -127,16 +129,18 @@ def test_run_02(random_seed=124, n=1000):
     col = edges_df["target"].values
     graph_coo = coo_array((data, (row, col)), shape=(vertex_count, vertex_count))
     graph_csr = graph_coo.tocsr()
-    dist_matrix = dijkstra(
+    dist_matrix_ref = dijkstra(
         csgraph=graph_csr, directed=True, indices=0, return_predecessors=False
     )
+    dist_matrix_ref = np.where(dist_matrix_ref > DTYPE_INF_PY, DTYPE_INF_PY, dist_matrix_ref)
 
     # In-house
     sp = ShortestPath(
         edges_df,
         orientation="one-to-all",
-        check_edges=True,
+        check_edges=True
     )
     path_lengths = sp.run(vertex_idx=0)
-
-    np.testing.assert_array_almost_equal(path_lengths.values, dist_matrix, decimal=2)
+    dist_matrix = path_lengths.values
+    
+    np.testing.assert_array_almost_equal(dist_matrix, dist_matrix_ref, decimal=8)
