@@ -67,6 +67,7 @@ class ShortestPath:
         weight="weight",
         orientation="one-to-all",
         check_edges=True,
+        permute=False
     ):
         self.time = {}
 
@@ -83,8 +84,12 @@ class ShortestPath:
         # reindex the vertices
         t = Timer()
         t.start()
-        self._vertices = self._permute_graph(source, target)
-        self.n_vertices = len(self._vertices)
+        self._permute = permute
+        if self._permute:
+            self._vertices = self._permute_graph(source, target)
+            self.n_vertices = len(self._vertices)
+        else:
+            self.n_vertices = self._edges[[source, target]].max().max() + 1
         t.stop()
         self.time["reindex the vertices"] = t.interval
 
@@ -220,11 +225,16 @@ class ShortestPath:
         # check the source/target vertex
         t = Timer()
         t.start()
-        if vertex_idx not in self._vertices.vert_idx_old.values:
-            raise ValueError(f"vertex {vertex_idx} not found in graph")
-        vertex_new = self._vertices.loc[
-            self._vertices.vert_idx_old == vertex_idx, "vert_idx_new"
-        ]
+        if self._permute:
+            if vertex_idx not in self._vertices.vert_idx_old.values:
+                raise ValueError(f"vertex {vertex_idx} not found in graph")
+            vertex_new = self._vertices.loc[
+                self._vertices.vert_idx_old == vertex_idx, "vert_idx_new"
+            ]
+        else:
+            if vertex_idx >= self.n_vertices:
+                raise ValueError(f"vertex {vertex_idx} not found in graph")
+            vertex_new = vertex_idx
         t.stop()
         self.time["check the source/target vertex"] = t.interval
 
@@ -246,13 +256,18 @@ class ShortestPath:
         # reorder results
         t = Timer()
         t.start()
-        self._vertices["path_length"] = path_lengths
-        path_lengths_df = self._vertices[["vert_idx_old", "path_length"]].sort_values(
-            by="vert_idx_old"
-        )
-        path_lengths_df.set_index("vert_idx_old", drop=True, inplace=True)
-        path_lengths_df.index.name = "vertex_idx"
-        path_lengths_series = path_lengths_df.path_length
+        if self._permute:
+            self._vertices["path_length"] = path_lengths
+            path_lengths_df = self._vertices[["vert_idx_old", "path_length"]].sort_values(
+                by="vert_idx_old"
+            )
+            path_lengths_df.set_index("vert_idx_old", drop=True, inplace=True)
+            path_lengths_df.index.name = "vertex_idx"
+            path_lengths_series = path_lengths_df.path_length
+        else:
+            path_lengths_series = pd.Series(path_lengths)
+            path_lengths_series.index.name = "vertex_idx"
+            path_lengths_series.name = "path_length"
         t.stop()
         self.time["reorder results"] = t.interval
 
