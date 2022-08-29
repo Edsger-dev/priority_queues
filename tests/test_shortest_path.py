@@ -131,22 +131,30 @@ def test_run_02(random_seed=124, n=1000):
     dist_matrix_ref = dijkstra(
         csgraph=graph_csr, directed=True, indices=0, return_predecessors=False
     )
+
+    # In-house
+    # without graph permutation
+    # return_inf=True
+    sp = ShortestPath(
+        edges_df, orientation="one-to-all", check_edges=True, permute=False
+    )
+    path_lengths = sp.run(vertex_idx=0, return_inf=True)
+    dist_matrix = path_lengths.values
+    np.testing.assert_array_almost_equal(dist_matrix, dist_matrix_ref, decimal=8)
+
+
     dist_matrix_ref = np.where(
         dist_matrix_ref > DTYPE_INF_PY, DTYPE_INF_PY, dist_matrix_ref
     )
 
-    # In-house
-
-    # without grapth permutation
-    sp = ShortestPath(
-        edges_df, orientation="one-to-all", check_edges=True, permute=False
-    )
+    # without graph permutation
+    # return_inf=False
     path_lengths = sp.run(vertex_idx=0)
     dist_matrix = path_lengths.values
-
     np.testing.assert_array_almost_equal(dist_matrix, dist_matrix_ref, decimal=8)
 
     # with graph permutation
+    # return_inf=False
     sp = ShortestPath(
         edges_df, orientation="one-to-all", check_edges=True, permute=True
     )
