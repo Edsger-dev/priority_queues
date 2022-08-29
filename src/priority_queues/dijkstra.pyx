@@ -6,8 +6,8 @@ cimport numpy as cnp
 
 import numpy as np
 
-from priority_queues.commons cimport (DTYPE, N_THREADS, NOT_IN_HEAP,
-                                      SCANNED, DTYPE_t)
+from priority_queues.commons cimport (DTYPE, N_THREADS, NOT_IN_HEAP, SCANNED,
+                                      DTYPE_t)
 from priority_queues.pq_bin_heap cimport (BinaryHeap,
                                           decrease_key_from_element_index,
                                           extract_min, free_heap,

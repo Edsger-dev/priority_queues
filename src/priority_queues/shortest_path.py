@@ -3,7 +3,7 @@ import pandas as pd
 from scipy.sparse import coo_array, csc_matrix, csr_matrix
 
 # )
-from priority_queues.commons import DTYPE_PY, DTYPE_INF_PY, Timer
+from priority_queues.commons import DTYPE_INF_PY, DTYPE_PY, Timer
 from priority_queues.dijkstra import path_length_from
 
 

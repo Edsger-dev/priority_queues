@@ -142,7 +142,6 @@ def test_run_02(random_seed=124, n=1000):
     dist_matrix = path_lengths.values
     np.testing.assert_array_almost_equal(dist_matrix, dist_matrix_ref, decimal=8)
 
-
     dist_matrix_ref = np.where(
         dist_matrix_ref > DTYPE_INF_PY, DTYPE_INF_PY, dist_matrix_ref
     )
