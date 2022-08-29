@@ -3,7 +3,7 @@ import pandas as pd
 from scipy.sparse import coo_array, csc_matrix, csr_matrix
 
 # )
-from priority_queues.commons import DTYPE_PY, Timer
+from priority_queues.commons import DTYPE_PY, DTYPE_INF_PY, Timer
 from priority_queues.dijkstra import path_length_from
 
 
@@ -220,7 +220,7 @@ class ShortestPath:
                 f"orientation should be either 'one-to-all' or 'all-to-one'"
             )
 
-    def run(self, vertex_idx):
+    def run(self, vertex_idx, return_inf=False):
 
         # check the source/target vertex
         t = Timer()
@@ -252,6 +252,10 @@ class ShortestPath:
             )
         t.stop()
         self.time["compute path length"] = t.interval
+
+        # deal with infinity
+        if return_inf:
+            path_lengths = np.where(path_lengths == DTYPE_INF_PY, np.inf, path_lengths)
 
         # reorder results
         t = Timer()
