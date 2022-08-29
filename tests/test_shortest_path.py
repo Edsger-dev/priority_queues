@@ -1,10 +1,11 @@
 import numpy as np
 import pandas as pd
 import pytest
-from priority_queues.commons import DTYPE_INF_PY
-from priority_queues.shortest_path import *
 from scipy.sparse import coo_array, csr_matrix
 from scipy.sparse.csgraph import dijkstra
+
+from priority_queues.commons import DTYPE_INF_PY
+from priority_queues.shortest_path import *
 
 
 @pytest.fixture
@@ -140,6 +141,8 @@ def test_run_02(random_seed=124, n=1000):
     )
     path_lengths = sp.run(vertex_idx=0, return_inf=True)
     dist_matrix = path_lengths.values
+    # not really understanding what happens when computing the difference of
+    # 2 vectors with inf values
     np.testing.assert_array_almost_equal(dist_matrix, dist_matrix_ref, decimal=8)
 
     dist_matrix_ref = np.where(
