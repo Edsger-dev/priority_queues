@@ -14,11 +14,10 @@ from priority_queues.pq_bin_heap cimport (BinaryHeap,
                                           init_heap_para, min_heap_insert)
 
 
-# TODO try csr_indices: sszie_t[::1]
 cpdef cnp.ndarray path_length_from(
-    ssize_t[:] csr_indices,
-    ssize_t[:] csr_indptr,
-    DTYPE_t[:] edge_weights,
+    ssize_t[::1] csr_indices,
+    ssize_t[::1] csr_indptr,
+    DTYPE_t[::1] edge_weights,
     int origin_vert_in,
     int vertex_count,
     int n_jobs=-1):
