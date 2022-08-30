@@ -27,7 +27,9 @@ def convert_sorted_graph_to_csr(edges_df, source, target, weight, vertex_count):
     data = edges_df[weight].values
     row = edges_df[source].values
     col = edges_df[target].values
-    graph_coo = coo_array((data, (row, col)), shape=(vertex_count, vertex_count))
+    graph_coo = coo_array(
+        (data, (row, col)), dtype=DTYPE_PY, shape=(vertex_count, vertex_count)
+    )
     graph_csr = graph_coo.tocsr()
 
     return graph_csr
@@ -53,9 +55,12 @@ def convert_sorted_graph_to_csc(edges_df, source, target, weight, vertex_count):
     data = edges_df[weight].values
     row = edges_df[source].values
     col = edges_df[target].values
-    graph_coo = coo_array((data, (row, col)), shape=(vertex_count, vertex_count))
+    graph_coo = coo_array(
+        (data, (row, col)), dtype=DTYPE_PY, shape=(vertex_count, vertex_count)
+    )
+    graph_csc = graph_coo.tocsc()
 
-    return csc_mat.indptr.astype(np.intp)
+    return graph_csc
 
 
 class ShortestPath:
@@ -76,7 +81,7 @@ class ShortestPath:
         # load the edges
         if check_edges:
             self._check_edges(edges_df, source, target, weight)
-        self._edges = edges_df[[source, target, weight]].copy(deep=True)
+        self._edges = edges_df
         self.n_edges = len(self._edges)
         t.stop()
         self.time["load the edges"] = t.interval
@@ -92,13 +97,6 @@ class ShortestPath:
             self.n_vertices = self._edges[[source, target]].max().max() + 1
         t.stop()
         self.time["reindex the vertices"] = t.interval
-
-        # cast the weight types
-        t = Timer()
-        t.start()
-        self._edges[weight] = self._edges[weight].astype(DTYPE_PY)
-        t.stop()
-        self.time["cast the types"] = t.interval
 
         # convert to CSR/CSC
         t = Timer()
@@ -278,4 +276,4 @@ class ShortestPath:
         return path_lengths_series
 
     def get_timings(self):
-        return pd.DataFrame.from_dict(self.time, orient='index', columns=['et_s'])
+        return pd.DataFrame.from_dict(self.time, orient="index", columns=["et_s"])
