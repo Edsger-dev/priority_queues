@@ -3,10 +3,9 @@
 
 import numpy as np
 import pandas as pd
+from priority_queues.shortest_path import ShortestPath
 from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import dijkstra
-
-from priority_queues.shortest_path import ShortestPath
 
 result_ref = [0.0, 1.0, 2.0, 2.0]
 
