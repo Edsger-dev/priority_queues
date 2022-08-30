@@ -276,3 +276,6 @@ class ShortestPath:
         self.time["reorder results"] = t.interval
 
         return path_lengths_series
+
+    def get_timings(self):
+        return pd.DataFrame.from_dict(self.time, orient='index', columns=['et_s'])
