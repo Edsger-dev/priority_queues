@@ -211,53 +211,6 @@ cdef ssize_t extract_min(BinaryHeap* bheap) nogil:
 
     return element_idx
 
-
-cdef ssize_t _parent(ssize_t node_idx) nogil:
-    """Get the parent node index.
-
-    input
-    =====
-    ssize_t node_idx: node index
-
-    output
-    ======
-    * ssize_t : node index of parent
-
-    assumption
-    ==========
-    * node_idx > 0
-    """
-    return (node_idx - 1) // 2
-
-
-cdef ssize_t _left_child(ssize_t node_idx) nogil:
-    """Returns the left child node.
-
-    input
-    =====
-    * ssize_t node_idx : node index
-
-    output
-    ======
-    * ssize_t : node index of left child
-    """
-    return 2 * node_idx + 1
-
-
-cdef ssize_t _right_child(ssize_t node_idx) nogil:
-    """Returns the right child node.
-
-    input
-    =====
-    * ssize_t node_idx : tree index
-
-    output
-    ======
-    * ssize_t : node index of right child
-    """
-    return 2 * (node_idx + 1)
-
-
 cdef void _exchange_nodes(
     BinaryHeap* bheap, 
     ssize_t node_i,
@@ -294,13 +247,13 @@ cdef void _min_heapify(
     input
     =====
     * BinaryHeap* bheap : binary heap
-    * ssize_t node_idx : tree index
+    * ssize_t s : tree index
     """
     cdef: 
         ssize_t l, r, s = node_idx
 
-    l = _left_child(s)
-    r = _right_child(s)
+    l =  2 * s + 1
+    r = l + 1
 
     if (
         (l < bheap.size) and 
@@ -343,7 +296,7 @@ cdef void _decrease_key_from_node_index(
 
     bheap.elements[bheap.A[i]].key = key_new
     while i > 0: 
-        j = _parent(i)
+        j = (i - 1) // 2
         key_j = bheap.elements[bheap.A[j]].key
         if key_j > key_new:
             _exchange_nodes(bheap, i, j)
