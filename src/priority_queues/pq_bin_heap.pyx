@@ -290,8 +290,7 @@ cdef void _decrease_key_from_node_index(
     * key_new < bheap.elements[bheap.A[i]].key
     """
     cdef:
-        ssize_t i = node_idx
-        ssize_t j
+        ssize_t i = node_idx, j
         DTYPE_t key_j
 
     bheap.elements[bheap.A[i]].key = key_new
