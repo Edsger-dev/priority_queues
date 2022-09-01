@@ -68,7 +68,7 @@ cdef void init_heap_para(
         _initialize_element(bheap, i)
 
 
-cdef void _initialize_element(
+cdef inline void _initialize_element(
     BinaryHeap* bheap,
     ssize_t element_idx) nogil:
     """Initialize a single element.
@@ -211,7 +211,7 @@ cdef ssize_t extract_min(BinaryHeap* bheap) nogil:
 
     return element_idx
 
-cdef void _exchange_nodes(
+cdef inline void _exchange_nodes(
     BinaryHeap* bheap, 
     ssize_t node_i,
     ssize_t node_j) nogil:
@@ -236,40 +236,44 @@ cdef void _exchange_nodes(
     bheap.elements[element_i].node_idx = node_j
 
 
-cdef void _min_heapify(
+cdef inline void _min_heapify(
     BinaryHeap* bheap,
     ssize_t node_idx) nogil:
     """Re-order sub-tree under a given node (given its node index) 
     until it satisfies the heap property.
 
-    Note that this function is recursive.
-
     input
     =====
     * BinaryHeap* bheap : binary heap
-    * ssize_t s : tree index
+    * ssize_t node_idx : node index
     """
     cdef: 
-        ssize_t l, r, s = node_idx
+        ssize_t l, r, i = node_idx, i_old = 0, s = 1
 
-    l =  2 * s + 1
-    r = l + 1
+    while s != i_old:
 
-    if (
-        (l < bheap.size) and 
-        (bheap.elements[bheap.A[l]].key < bheap.elements[bheap.A[s]].key)
-    ):
-        s = l
+        l =  2 * i + 1
+        r = l + 1
 
-    if (
-        (r < bheap.size) and 
-        (bheap.elements[bheap.A[r]].key < bheap.elements[bheap.A[s]].key)
-    ):
-        s = r
+        if (
+            (l < bheap.size) and 
+            (bheap.elements[bheap.A[l]].key < bheap.elements[bheap.A[i]].key)
+        ):
+            s = l
+        else:
+            s = i
 
-    if s != node_idx:
-        _exchange_nodes(bheap, node_idx, s)
-        _min_heapify(bheap, s)
+        if (
+            (r < bheap.size) and 
+            (bheap.elements[bheap.A[r]].key < bheap.elements[bheap.A[s]].key)
+        ):
+            s = r
+
+        i_old = i
+        if s != i:
+            _exchange_nodes(bheap, i, s)
+            i = s
+        
 
 
 cdef void _decrease_key_from_node_index(
