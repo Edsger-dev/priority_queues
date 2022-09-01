@@ -3,13 +3,12 @@ from time import perf_counter
 
 import numpy as np
 import pandas as pd
-from priority_queues.shortest_path import ShortestPath
 from scipy.sparse import coo_array, csr_matrix
 from scipy.sparse.csgraph import dijkstra
 
-parser = ArgumentParser(
-        description="Command line interface to perf_01.py"
-    )
+from priority_queues.shortest_path import ShortestPath
+
+parser = ArgumentParser(description="Command line interface to perf_01.py")
 parser.add_argument(
     "-n",
     "--network",
@@ -21,9 +20,24 @@ parser.add_argument(
 )
 args = parser.parse_args()
 reg = args.network_name.upper()
-assert reg in ["NY", "BAY", "COL", "FLA", "NW", "NE", "CAL", "LKS", "E", "W", "CTR", "USA"]
+assert reg in [
+    "NY",
+    "BAY",
+    "COL",
+    "FLA",
+    "NW",
+    "NE",
+    "CAL",
+    "LKS",
+    "E",
+    "W",
+    "CTR",
+    "USA",
+]
 
-NETWORK_FILE_PATH = f"/home/francois/Workspace/posts_priority_queue//data/{reg}/{reg}.parquet"
+NETWORK_FILE_PATH = (
+    f"/home/francois/Workspace/posts_priority_queue//data/{reg}/{reg}.parquet"
+)
 IDX_FROM = 1000
 
 edges_df = pd.read_parquet(NETWORK_FILE_PATH)
