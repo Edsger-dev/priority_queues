@@ -29,7 +29,7 @@ def find_version(*file_paths):
 with open("LICENSE") as f:
     license = f.read()
 
-extra_compile_args = ["-Ofast"]
+extra_compile_args = ["-O3", "-ffast-math", "-march=native"]  # "-O3" "-Ofast"
 
 extensions = [
     Extension("priority_queues.commons", ["src/priority_queues/commons.pyx"]),
@@ -45,6 +45,7 @@ extensions = [
     Extension(
         "priority_queues.dijkstra",
         ["src/priority_queues/dijkstra.pyx"],
+        extra_compile_args=extra_compile_args,
     ),
 ]
 
