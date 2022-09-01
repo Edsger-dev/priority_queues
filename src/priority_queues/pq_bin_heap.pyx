@@ -248,9 +248,9 @@ cdef inline void _min_heapify(
     * ssize_t node_idx : node index
     """
     cdef: 
-        ssize_t l, r, i = node_idx, i_old = 0, s = 1
+        ssize_t l, r, i = node_idx, s
 
-    while s != i_old:
+    while True:
 
         l =  2 * i + 1
         r = l + 1
@@ -269,10 +269,11 @@ cdef inline void _min_heapify(
         ):
             s = r
 
-        i_old = i
         if s != i:
             _exchange_nodes(bheap, i, s)
             i = s
+        else:
+            break
         
 
 
