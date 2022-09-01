@@ -276,7 +276,7 @@ cdef inline void _min_heapify(
         
 
 
-cdef void _decrease_key_from_node_index(
+cdef inline void _decrease_key_from_node_index(
     BinaryHeap* bheap,
     ssize_t node_idx, 
     DTYPE_t key_new) nogil:
