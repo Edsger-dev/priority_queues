@@ -33,6 +33,7 @@ cdef void init_heap(
     bheap.size = 0
     bheap.A = <ssize_t*> malloc(length * sizeof(ssize_t))
     bheap.elements = <Element*> malloc(length * sizeof(Element))
+    bheap.keys = <DTYPE_t*> malloc(length * sizeof(DTYPE_t))
 
     for i in range(length):
         bheap.A[i] = length
@@ -58,6 +59,7 @@ cdef void init_heap_para(
     bheap.size = 0
     bheap.A = <ssize_t*> malloc(length * sizeof(ssize_t))
     bheap.elements = <Element*> malloc(length * sizeof(Element))
+    bheap.keys = <DTYPE_t*> malloc(length * sizeof(DTYPE_t))
 
     for i in prange(
         length, 
@@ -78,7 +80,7 @@ cdef inline void _initialize_element(
     * BinaryHeap* bheap : binary heap
     * ssize_t element_idx : index of the element in the element array
     """
-    bheap.elements[element_idx].key = DTYPE_INF
+    bheap.keys[element_idx] = DTYPE_INF
     bheap.elements[element_idx].state = NOT_IN_HEAP
     bheap.elements[element_idx].node_idx = bheap.length
 
@@ -93,6 +95,7 @@ cdef void free_heap(
     """
     free(bheap.A)
     free(bheap.elements)
+    free(nheap.keys)
 
 
 cdef void min_heap_insert(
@@ -159,7 +162,7 @@ cdef DTYPE_t peek(BinaryHeap* bheap) nogil:
     * bheap.size > 0
     * heap is heapified
     """
-    return bheap.elements[bheap.A[0]].key
+    return bheap.keys[bheap.A[0]]
 
 
 cdef bint is_empty(BinaryHeap* bheap) nogil:
@@ -226,6 +229,7 @@ cdef inline void _exchange_nodes(
     cdef: 
         ssize_t element_i = bheap.A[node_i]
         ssize_t element_j = bheap.A[node_j]
+        DTYPE_t key_tmp
     
     # exchange element indices in the heap array
     bheap.A[node_i] = element_j
@@ -234,6 +238,11 @@ cdef inline void _exchange_nodes(
     # exchange node indices in the element array
     bheap.elements[element_j].node_idx = node_i
     bheap.elements[element_i].node_idx = node_j
+
+    # exchange keys
+    key_tmp = bheap.keys[element_i]
+    bheap.keys[element_i] = bheap.keys[element_j]
+    bheap.keys[element_j] = key_tmp
 
 
 cdef inline void _min_heapify(
@@ -257,7 +266,7 @@ cdef inline void _min_heapify(
 
         if (
             (l < bheap.size) and 
-            (bheap.elements[bheap.A[l]].key < bheap.elements[bheap.A[i]].key)
+            (bheap.keys[bheap.A[l]] < bheap.keys[bheap.A[i]])
         ):
             s = l
         else:
@@ -265,7 +274,7 @@ cdef inline void _min_heapify(
 
         if (
             (r < bheap.size) and 
-            (bheap.elements[bheap.A[r]].key < bheap.elements[bheap.A[s]].key)
+            (bheap.keys[bheap.A[r]] < bheap.keys[bheap.A[s]])
         ):
             s = r
 
@@ -298,10 +307,10 @@ cdef inline void _decrease_key_from_node_index(
         ssize_t i = node_idx, j
         DTYPE_t key_j
 
-    bheap.elements[bheap.A[i]].key = key_new
+    bheap.keys[bheap.A[i]] = key_new
     while i > 0: 
         j = (i - 1) // 2
-        key_j = bheap.elements[bheap.A[j]].key
+        key_j = bheap.keys[bheap.A[j]]
         if key_j > key_new:
             _exchange_nodes(bheap, i, j)
             i = j
