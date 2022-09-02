@@ -75,6 +75,7 @@ class ShortestPath:
         permute=False,
     ):
         self.time = {}
+        self._return_Series = True
 
         t = Timer()
         t.start()
@@ -218,7 +219,9 @@ class ShortestPath:
                 f"orientation should be either 'one-to-all' or 'all-to-one'"
             )
 
-    def run(self, vertex_idx, return_inf=False):
+    def run(self, vertex_idx, return_inf=False, return_Series=True):
+
+        self._return_Series = return_Series
 
         # check the source/target vertex
         t = Timer()
@@ -240,7 +243,7 @@ class ShortestPath:
         t = Timer()
         t.start()
         if self._orientation == "one-to-all":
-            path_lengths = path_length_from(
+            path_length_values = path_length_from(
                 self._indices,
                 self._indptr,
                 self._edge_weights,
@@ -253,27 +256,52 @@ class ShortestPath:
 
         # deal with infinity
         if return_inf:
-            path_lengths = np.where(path_lengths == DTYPE_INF_PY, np.inf, path_lengths)
+            path_length_values = np.where(path_length_values == DTYPE_INF_PY, np.inf, path_length_values)
 
         # reorder results
-        t = Timer()
-        t.start()
-        if self._permute:
-            self._vertices["path_length"] = path_lengths
-            path_lengths_df = self._vertices[
-                ["vert_idx_old", "path_length"]
-            ].sort_values(by="vert_idx_old")
-            path_lengths_df.set_index("vert_idx_old", drop=True, inplace=True)
-            path_lengths_df.index.name = "vertex_idx"
-            path_lengths_series = path_lengths_df.path_length
-        else:
-            path_lengths_series = pd.Series(path_lengths)
-            path_lengths_series.index.name = "vertex_idx"
-            path_lengths_series.name = "path_length"
-        t.stop()
-        self.time["reorder results"] = t.interval
+        if self._return_Series:
+            
+            t = Timer()
+            t.start()
 
-        return path_lengths_series
+            if self._permute:
+                self._vertices["path_length"] = path_length_values
+                path_lengths_df = self._vertices[
+                    ["vert_idx_old", "path_length"]
+                ].sort_values(by="vert_idx_old")
+                path_lengths_df.set_index("vert_idx_old", drop=True, inplace=True)
+                path_lengths_df.index.name = "vertex_idx"
+                path_lengths_series = path_lengths_df.path_length
+            else:
+                path_lengths_series = pd.Series(path_length_values)
+                path_lengths_series.index.name = "vertex_idx"
+                path_lengths_series.name = "path_length"
+
+            t.stop()
+            self.time["reorder results"] = t.interval
+
+            return path_length_values
+
+        else:
+
+            t = Timer()
+            t.start()
+
+            if self._permute:
+                self._vertices["path_length"] = path_length_values
+                path_lengths_df = self._vertices[
+                    ["vert_idx_old", "path_length"]
+                ].sort_values(by="vert_idx_old")
+                path_lengths_df.set_index("vert_idx_old", drop=True, inplace=True)
+                path_lengths_df.index.name = "vertex_idx"
+                path_lengths_series = path_lengths_df.path_length
+                path_length_values = path_lengths_series.values
+
+            t.stop()
+            self.time["reorder results"] = t.interval
+
+            return path_length_values
+
 
     def get_timings(self):
         return pd.DataFrame.from_dict(self.time, orient="index", columns=["et_s"])
