@@ -291,8 +291,8 @@ cdef inline void _decrease_key_from_node_index(
 
     assumptions
     ===========
-    * bheap.elements[bheap.A[i]] is in the heap (i < bheap.size)
-    * key_new < bheap.elements[bheap.A[i]].key
+    * bheap.elements[bheap.A[node_idx]] is in the heap (node_idx < bheap.size)
+    * key_new < bheap.elements[bheap.A[node_idx]].key
     """
     cdef:
         ssize_t i = node_idx, j
