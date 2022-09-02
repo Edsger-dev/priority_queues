@@ -3,7 +3,6 @@ from priority_queues.commons cimport DTYPE_t, ElementState
 
 
 cdef struct Element:
-    DTYPE_t key
     ElementState state
     ssize_t node_idx
 
