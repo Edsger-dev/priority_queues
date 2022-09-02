@@ -47,7 +47,7 @@ cpdef cnp.ndarray path_length_from(
     # main loop
     while bheap.size > 0:
         tail_vert_idx = extract_min(&bheap)
-        tail_vert_val = bheap.elements[tail_vert_idx].key
+        tail_vert_val = bheap.keys[tail_vert_idx]
         # loop on outgoing edges
         for edge_idx in range(csr_indptr[tail_vert_idx], csr_indptr[tail_vert_idx + 1]):
             head_vert_idx = csr_indices[edge_idx]
@@ -56,7 +56,7 @@ cpdef cnp.ndarray path_length_from(
                 head_vert_val = tail_vert_val + edge_weights[edge_idx]
                 if vert_state == NOT_IN_HEAP:
                     min_heap_insert(&bheap, head_vert_idx, head_vert_val)
-                elif bheap.elements[head_vert_idx].key > head_vert_val:
+                elif bheap.keys[head_vert_idx] > head_vert_val:
                     decrease_key_from_element_index(&bheap, head_vert_idx, head_vert_val)
 
     # copy the results into a numpy array
@@ -70,7 +70,7 @@ cpdef cnp.ndarray path_length_from(
         schedule='static', 
         nogil=True, 
         num_threads=num_threads):
-        path_lengths_view[i] = bheap.elements[i].key 
+        path_lengths_view[i] = bheap.keys[i]
 
     free_heap(&bheap)  # cleanup
 
