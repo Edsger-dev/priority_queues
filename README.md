@@ -18,3 +18,4 @@ Priority queues for some path algorithms
 |---|---:|---:|
 | SciPy | 10.46 | 15.69 |
 | priority_queues |  4.94 | 6.89 |
+
