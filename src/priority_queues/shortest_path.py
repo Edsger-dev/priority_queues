@@ -280,7 +280,7 @@ class ShortestPath:
             t.stop()
             self.time["reorder results"] = t.interval
 
-            return path_length_values
+            return path_lengths_series
 
         else:
 

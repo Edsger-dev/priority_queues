@@ -26,8 +26,7 @@ cdef void init_heap(
     * BinaryHeap* bheap : binary heap
     * ssize_t length : length (maximum size) of the heap
     """
-    cdef: 
-        ssize_t i
+    cdef ssize_t i
 
     bheap.length = length
     bheap.size = 0
@@ -95,7 +94,7 @@ cdef void free_heap(
     """
     free(bheap.A)
     free(bheap.elements)
-    free(nheap.keys)
+    free(bheap.keys)
 
 
 cdef void min_heap_insert(
@@ -238,11 +237,6 @@ cdef inline void _exchange_nodes(
     # exchange node indices in the element array
     bheap.elements[element_j].node_idx = node_i
     bheap.elements[element_i].node_idx = node_j
-
-    # exchange keys
-    key_tmp = bheap.keys[element_i]
-    bheap.keys[element_i] = bheap.keys[element_j]
-    bheap.keys[element_j] = key_tmp
 
 
 cdef inline void _min_heapify(

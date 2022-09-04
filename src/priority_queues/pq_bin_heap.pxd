@@ -11,6 +11,7 @@ cdef struct BinaryHeap:
     ssize_t size  # number of elements in the heap
     ssize_t* A  # array storing the binary tree
     Element* elements  # array storing the elements
+    DTYPE_t* keys
 
 cdef void init_heap(BinaryHeap*, ssize_t) nogil
 cdef void init_heap_para(BinaryHeap*, ssize_t, int) nogil

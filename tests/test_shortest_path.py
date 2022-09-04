@@ -105,10 +105,11 @@ def test_run_01(braess):
 
     edges_df = braess
     sp = ShortestPath(edges_df, orientation="one-to-all", check_edges=False)
-    path_lengths = sp.run(vertex_idx=0)
+    path_lengths = sp.run(vertex_idx=0, return_Series=True)
     path_lengths_ref = pd.Series([0.0, 1.0, 1.0, 2.0])
     path_lengths_ref.index.name = "vertex_idx"
     path_lengths_ref.name = "path_length"
+    print(path_lengths)
     pd.testing.assert_series_equal(path_lengths, path_lengths_ref)
 
 
