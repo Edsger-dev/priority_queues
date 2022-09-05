@@ -311,6 +311,16 @@ cdef cnp.ndarray copy_keys_to_numpy_para(
     int num_threads
 ):
     """Copy the keys into a numpy array, in parallel.
+
+    input
+    =====
+    * BinaryHeap* bheap : binary heap
+    * int vertex_count : vertex count
+    * int num_threads : number of threads for the parallel job
+
+    output
+    ======
+    * cnp.ndarray : NumPy array with all the keys
     """
 
     path_lengths = cnp.ndarray(vertex_count, dtype=DTYPE)
