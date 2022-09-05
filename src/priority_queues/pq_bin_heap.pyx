@@ -8,12 +8,13 @@
     Tree elements also stored in a static array.
 """
 
-from cython.parallel import prange
 import numpy as np
+from cython.parallel import prange
+
 from libc.stdlib cimport free, malloc
 
-from priority_queues.commons cimport (DTYPE_INF, IN_HEAP, N_THREADS,
-                                      NOT_IN_HEAP, SCANNED, DTYPE, DTYPE_t)
+from priority_queues.commons cimport (DTYPE, DTYPE_INF, IN_HEAP, N_THREADS,
+                                      NOT_IN_HEAP, SCANNED, DTYPE_t)
 
 
 cdef void init_heap(

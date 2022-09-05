@@ -256,11 +256,13 @@ class ShortestPath:
 
         # deal with infinity
         if return_inf:
-            path_length_values = np.where(path_length_values == DTYPE_INF_PY, np.inf, path_length_values)
+            path_length_values = np.where(
+                path_length_values == DTYPE_INF_PY, np.inf, path_length_values
+            )
 
         # reorder results
         if self._return_Series:
-            
+
             t = Timer()
             t.start()
 
@@ -301,7 +303,6 @@ class ShortestPath:
             self.time["reorder results"] = t.interval
 
             return path_length_values
-
 
     def get_timings(self):
         return pd.DataFrame.from_dict(self.time, orient="index", columns=["et_s"])

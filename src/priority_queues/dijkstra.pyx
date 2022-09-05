@@ -12,6 +12,7 @@ from priority_queues.pq_bin_heap cimport (BinaryHeap,
                                           decrease_key_from_element_index,
                                           extract_min, free_heap,
                                           init_heap_para, min_heap_insert)
+
 #, copy_keys_to_numpy)
 
 
