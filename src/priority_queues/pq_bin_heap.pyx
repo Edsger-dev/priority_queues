@@ -26,8 +26,7 @@ cdef void init_heap(
     * BinaryHeap* bheap : binary heap
     * ssize_t length : length (maximum size) of the heap
     """
-    cdef: 
-        ssize_t i
+    cdef ssize_t i
 
     bheap.length = length
     bheap.size = 0
@@ -51,8 +50,7 @@ cdef void init_heap_para(
     * ssize_t length : length (maximum size) of the heap
     * int num_threads :  number of threads for the parallel job
     """
-    cdef: 
-        ssize_t i
+    cdef ssize_t i
 
     bheap.length = length
     bheap.size = 0
@@ -247,8 +245,7 @@ cdef inline void _min_heapify(
     * BinaryHeap* bheap : binary heap
     * ssize_t node_idx : node index
     """
-    cdef: 
-        ssize_t l, r, i = node_idx, s
+    cdef ssize_t l, r, i = node_idx, s
 
     while True:
 
