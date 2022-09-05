@@ -38,11 +38,12 @@ cpdef cnp.ndarray path_length_from(
     if num_threads < 1:
         num_threads = N_THREADS
 
-    # initialization (the priority queue is filled with all nodes)
-    # all nodes of INFINITY key
+    # initialization of the heap elements 
+    # all nodes have INFINITY key and NOT_IN_HEAP state
     init_heap_para(&bheap, <ssize_t>vertex_count, num_threads)
 
-    # the key is set to zero for the origin vertex
+    # the key is set to zero for the origin vertex,
+    # which is inserted into the heap
     min_heap_insert(&bheap, origin_vert, 0.0)
 
     # main loop
