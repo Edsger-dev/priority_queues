@@ -8,6 +8,7 @@
     Tree elements also stored in a static array.
 """
 
+cimport numpy as cnp
 from cython.parallel import prange
 
 from libc.stdlib cimport free, malloc
@@ -273,7 +274,6 @@ cdef inline void _min_heapify(
             break
         
 
-
 cdef inline void _decrease_key_from_node_index(
     BinaryHeap* bheap,
     ssize_t node_idx, 
@@ -305,23 +305,26 @@ cdef inline void _decrease_key_from_node_index(
         else:
             break
 
-# cdef np.ndarray copy_keys_to_numpy(
-#     BinaryHeap* bheap,
-#     int vertex_count,
-#     int num_threads
-# ):
+cdef cnp.ndarray copy_keys_to_numpy(
+    BinaryHeap* bheap,
+    int vertex_count,
+    int num_threads
+):
+    """Copy the keys into a numpy array, in parallel.
+    """
 
-#     path_lengths = np.zeros(vertex_count, dtype=DTYPE)
+    path_lengths = cnp.ndarray(vertex_count, dtype=DTYPE)
 
-#     cdef:
-#         int i  # loop counter
-#         DTYPE_t[:] path_lengths_view = path_lengths
+    cdef:
+        int i  # loop counter
+        DTYPE_t[::1] path_lengths_view = path_lengths
+        
 
-#     for i in prange(
-#         vertex_count, 
-#         schedule='static', 
-#         nogil=True, 
-#         num_threads=num_threads):
-#         path_lengths_view[i] = bheap.elements[i].key 
+    for i in prange(
+        vertex_count, 
+        schedule='static', 
+        nogil=True, 
+        num_threads=num_threads):
+        path_lengths_view[i] = bheap.elements[i].key 
 
-#     return path_lengths
+    return path_lengths

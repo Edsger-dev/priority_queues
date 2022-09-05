@@ -11,9 +11,8 @@ from priority_queues.commons cimport (DTYPE, N_THREADS, NOT_IN_HEAP, SCANNED,
 from priority_queues.pq_bin_heap cimport (BinaryHeap,
                                           decrease_key_from_element_index,
                                           extract_min, free_heap,
-                                          init_heap_para, min_heap_insert)
-
-#, copy_keys_to_numpy)
+                                          init_heap_para, min_heap_insert, 
+                                          copy_keys_to_numpy)
 
 
 cpdef cnp.ndarray path_length_from(
@@ -62,21 +61,10 @@ cpdef cnp.ndarray path_length_from(
                     decrease_key_from_element_index(&bheap, head_vert_idx, head_vert_val)
 
     # copy the results into a numpy array
-    path_lengths = np.zeros(vertex_count, dtype=DTYPE)
-    cdef:
-        int i  # loop counter
-        DTYPE_t[:] path_lengths_view = path_lengths
+    path_lengths = copy_keys_to_numpy(&bheap, vertex_count, num_threads)
 
-    for i in prange(
-        vertex_count, 
-        schedule='static', 
-        nogil=True, 
-        num_threads=num_threads):
-        path_lengths_view[i] = bheap.elements[i].key
-
-    # path_lengths = copy_keys_to_numpy(&bheap, vertex_count, num_threads)
-
-    free_heap(&bheap)  # cleanup
+    # cleanup
+    free_heap(&bheap)  
 
     return path_lengths
 
