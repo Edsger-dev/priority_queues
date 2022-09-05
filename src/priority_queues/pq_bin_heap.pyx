@@ -9,11 +9,11 @@
 """
 
 from cython.parallel import prange
-
+import numpy as np
 from libc.stdlib cimport free, malloc
 
 from priority_queues.commons cimport (DTYPE_INF, IN_HEAP, N_THREADS,
-                                      NOT_IN_HEAP, SCANNED, DTYPE_t)
+                                      NOT_IN_HEAP, SCANNED, DTYPE, DTYPE_t)
 
 
 cdef void init_heap(
@@ -252,7 +252,7 @@ cdef inline void _min_heapify(
 
     while True:
 
-        l =  2 * i + 1
+        l =  2 * i + 1  # (i << 1) + 1
         r = l + 1
 
         if (
@@ -300,10 +300,31 @@ cdef inline void _decrease_key_from_node_index(
 
     bheap.elements[bheap.A[i]].key = key_new
     while i > 0: 
-        j = (i - 1) // 2
+        j = (i - 1) // 2  # (i - 1) >> 1
         key_j = bheap.elements[bheap.A[j]].key
         if key_j > key_new:
             _exchange_nodes(bheap, i, j)
             i = j
         else:
             break
+
+# cdef np.ndarray copy_keys_to_numpy(
+#     BinaryHeap* bheap,
+#     int vertex_count,
+#     int num_threads
+# ):
+
+#     path_lengths = np.zeros(vertex_count, dtype=DTYPE)
+
+#     cdef:
+#         int i  # loop counter
+#         DTYPE_t[:] path_lengths_view = path_lengths
+
+#     for i in prange(
+#         vertex_count, 
+#         schedule='static', 
+#         nogil=True, 
+#         num_threads=num_threads):
+#         path_lengths_view[i] = bheap.elements[i].key 
+
+#     return path_lengths
