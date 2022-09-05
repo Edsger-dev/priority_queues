@@ -305,7 +305,7 @@ cdef inline void _decrease_key_from_node_index(
         else:
             break
 
-cdef cnp.ndarray copy_keys_to_numpy(
+cdef cnp.ndarray copy_keys_to_numpy_para(
     BinaryHeap* bheap,
     int vertex_count,
     int num_threads
