@@ -23,7 +23,7 @@ cpdef init_01():
     assert bheap.size == 0
     for i in range(l):
         assert bheap.A[i] == bheap.length
-        assert bheap.keys[i] == DTYPE_INF
+        assert bheap.elements[i].key == DTYPE_INF
         assert bheap.elements[i].state == NOT_IN_HEAP
         assert bheap.elements[i].node_idx == bheap.length
 
@@ -42,7 +42,7 @@ cpdef init_02():
     assert bheap.size == 0
     for i in range(l):
         assert bheap.A[i] == bheap.length
-        assert bheap.keys[i] == DTYPE_INF
+        assert bheap.elements[i].key == DTYPE_INF
         assert bheap.elements[i].state == NOT_IN_HEAP
         assert bheap.elements[i].node_idx == bheap.length
 
@@ -64,7 +64,7 @@ cpdef insert_01():
     min_heap_insert(&bheap, 0, key)
     assert bheap.size == 1
     assert bheap.A[0] == 0
-    assert bheap.keys[0] == key
+    assert bheap.elements[0].key == key
     assert bheap.elements[0].state == IN_HEAP
     assert bheap.elements[0].node_idx == 0
 
@@ -85,7 +85,7 @@ cpdef insert_02():
     A_ref = [1, 4, 4, 4]
     for i in range(4):
         assert bheap.A[i] == A_ref[i]
-    assert bheap.keys[elem_idx] == key
+    assert bheap.elements[elem_idx].key == key
     assert bheap.elements[elem_idx].state == IN_HEAP
     assert bheap.elements[1].node_idx == 0
     assert bheap.size == 1
@@ -96,7 +96,7 @@ cpdef insert_02():
     A_ref = [0, 1, 4, 4]
     for i in range(4):
         assert bheap.A[i] == A_ref[i]
-    assert bheap.keys[elem_idx] == key
+    assert bheap.elements[elem_idx].key == key
     assert bheap.elements[elem_idx].state == IN_HEAP
     assert bheap.elements[0].node_idx == 0
     assert bheap.elements[1].node_idx == 1
@@ -108,7 +108,7 @@ cpdef insert_02():
     A_ref = [0, 1, 3, 4]
     for i in range(4):
         assert bheap.A[i] == A_ref[i]
-    assert bheap.keys[elem_idx] == key
+    assert bheap.elements[elem_idx].key == key
     assert bheap.elements[elem_idx].state == IN_HEAP
     assert bheap.elements[0].node_idx == 0
     assert bheap.elements[1].node_idx == 1
@@ -121,7 +121,7 @@ cpdef insert_02():
     A_ref = [2, 0, 3, 1]
     for i in range(4):
         assert bheap.A[i] == A_ref[i]
-    assert bheap.keys[2] == key
+    assert bheap.elements[2].key == key
     assert bheap.elements[2].state == IN_HEAP
     assert bheap.elements[0].node_idx == 1
     assert bheap.elements[1].node_idx == 3
@@ -230,7 +230,7 @@ cpdef decrease_key_from_element_index_01():
         assert bheap.A[i] == A_ref[i]
         assert bheap.elements[i].node_idx == n_ref[i]
         assert bheap.elements[i].state == IN_HEAP
-        assert bheap.keys[i] == key_ref[i]
+        assert bheap.elements[i].key == key_ref[i]
 
     decrease_key_from_element_index(&bheap, 3, 0.0)
 
@@ -242,7 +242,7 @@ cpdef decrease_key_from_element_index_01():
         assert bheap.A[i] == A_ref[i]
         assert bheap.elements[i].node_idx == n_ref[i]
         assert bheap.elements[i].state == IN_HEAP
-        assert bheap.keys[i] == key_ref[i]
+        assert bheap.elements[i].key == key_ref[i]
 
 
     decrease_key_from_element_index(&bheap, 1, -1.0)
@@ -255,7 +255,7 @@ cpdef decrease_key_from_element_index_01():
         assert bheap.A[i] == A_ref[i]
         assert bheap.elements[i].node_idx == n_ref[i]
         assert bheap.elements[i].state == IN_HEAP
-        assert bheap.keys[i] == key_ref[i]
+        assert bheap.elements[i].key == key_ref[i]
 
     free_heap(&bheap)
 
@@ -270,7 +270,7 @@ cdef void heapsort(DTYPE_t[:] values_in, DTYPE_t[:] values_out) nogil:
     for i in range(l):
         min_heap_insert(&bheap, i, values_in[i])
     for i in range(l):
-        values_out[i] = bheap.keys[extract_min(&bheap)]
+        values_out[i] = bheap.elements[extract_min(&bheap)].key
     free_heap(&bheap)
 
 
