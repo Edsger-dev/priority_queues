@@ -45,6 +45,7 @@ edges_df = pd.read_parquet(NETWORK_FILE_PATH)
 edges_df.rename(
     columns={"id_from": "source", "id_to": "target", "tt": "weight"}, inplace=True
 )
+vertex_count = edges_df[["source", "target"]].max().max() + 1
 
 print(edges_df.head(3))
 
@@ -57,7 +58,6 @@ start = perf_counter()
 g = gt.Graph(directed=True)
 
 # create the vertices
-vertex_count = edges_df[["source", "target"]].max().max() + 1
 g.add_vertex(vertex_count)
 
 # create the edges
