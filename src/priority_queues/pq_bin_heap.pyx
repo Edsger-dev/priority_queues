@@ -246,26 +246,47 @@ cdef inline void _min_heapify(
     * BinaryHeap* bheap : binary heap
     * ssize_t node_idx : node index
     """
-    cdef ssize_t l, r, i = node_idx, s
+    cdef: 
+        ssize_t l, r, i = node_idx, s
+        DTYPE_t key_i, key_l, key_s
 
     while True:
 
         l =  2 * i + 1  # (i << 1) + 1
         r = l + 1
-
-        if (
-            (l < bheap.size) and 
-            (bheap.elements[bheap.A[l]].key < bheap.elements[bheap.A[i]].key)
-        ):
-            s = l
+        
+        key_i = bheap.elements[bheap.A[i]].key
+        if (l < bheap.size):
+            key_l = bheap.elements[bheap.A[l]].key
+            if (key_l < key_i):
+                s = l
+                key_s = key_l
+            else:
+                s = i
+                key_s = key_i
         else:
             s = i
+            key_s = key_i
 
         if (
             (r < bheap.size) and 
-            (bheap.elements[bheap.A[r]].key < bheap.elements[bheap.A[s]].key)
+            (bheap.elements[bheap.A[r]].key < key_s)
         ):
             s = r
+
+        # if (
+        #     (l < bheap.size) and 
+        #     (bheap.elements[bheap.A[l]].key < bheap.elements[bheap.A[i]].key)
+        # ):
+        #     s = l
+        # else:
+        #     s = i
+
+        # if (
+        #     (r < bheap.size) and 
+        #     (bheap.elements[bheap.A[r]].key < bheap.elements[bheap.A[s]].key)
+        # ):
+        #     s = r
 
         if s != i:
             _exchange_nodes(bheap, i, s)
@@ -335,6 +356,6 @@ cdef cnp.ndarray copy_keys_to_numpy_para(
         schedule='static', 
         nogil=True, 
         num_threads=num_threads):
-        path_lengths_view[i] = bheap.elements[i].key 
+        path_lengths_view[i] = bheap.elements[i].key
 
     return path_lengths
