@@ -5,7 +5,7 @@ Priority queues for some path algorithms
 
 |  | vertices | edges |
 |---|---:|---:|
-| CTR |  |  |
+| CTR | 14081817 | 33866826 |
 | USA | 23947348 | 57708624 |
 
 ## Elapsed time (s)
