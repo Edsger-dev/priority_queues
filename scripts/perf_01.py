@@ -1,8 +1,11 @@
+
 from argparse import ArgumentParser
+import os
 from time import perf_counter
 
 import graph_tool as gt
 from graph_tool import topology
+import networkit as nk
 import numpy as np
 import pandas as pd
 from scipy.sparse import coo_array, csr_matrix
@@ -38,7 +41,7 @@ assert reg in [
 ]
 
 NETWORK_FILE_PATH = (
-    f"/home/francois/Workspace/posts_priority_queue//data/{reg}/{reg}.parquet"
+    f"/home/francois/Workspace/posts_priority_queue/data/{reg}/{reg}.parquet"
 )
 IDX_FROM = 1000
 
@@ -110,6 +113,61 @@ print(f"GT Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
 assert np.allclose(
     dist_matrix_gt, dist_matrix_ref, rtol=1e-05, atol=1e-08, equal_nan=True
 )
+
+# NetworkKit
+# ==========
+
+start = perf_counter()
+
+nk_file_format = nk.graphio.Format.NetworkitBinary
+networkit_file_path = (
+    f"/home/francois/Workspace/posts_priority_queue/data/{reg}/{reg}.NetworkitBinary"
+)
+
+if os.path.exists(networkit_file_path):
+
+    g = nk.graphio.readGraph(networkit_file_path, nk_file_format)
+
+else:
+
+    g = nk.Graph(n=vertex_count, weighted=True, directed=True, edgesIndexed=False)
+
+    for row in edges_df.itertuples():
+        g.addEdge(row.source, row.target, w=row.weight)
+
+
+    nk.graphio.writeGraph(g, networkit_file_path, nk_file_format)
+
+end = perf_counter()
+elapsed_time = end - start
+print(f"NK Load the graph - Elapsed time: {elapsed_time:6.2f} s")
+
+start = perf_counter()
+
+dijkstra = nk.distance.Dijkstra(
+    g, IDX_FROM, storePaths=False, storeNodesSortedByDistance=False
+)
+
+end = perf_counter()
+elapsed_time = end - start
+print(f"NK Dijkstra init - Elapsed time: {elapsed_time:6.2f} s")
+
+# Run
+start = perf_counter()
+dijkstra.run()
+
+dist_matrix = dijkstra.getDistances(asarray=True)
+dist_matrix_nk = np.asarray(dist_matrix)
+dist_matrix_nk = np.where(dist_matrix_nk >= 1.79769313e308, np.inf, dist_matrix_nk)
+
+end = perf_counter()
+elapsed_time = end - start
+print(f"NK Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
+
+assert np.allclose(
+    dist_matrix_nk, dist_matrix_ref, rtol=1e-05, atol=1e-08, equal_nan=True
+)
+
 
 # priority_queues
 # ===============

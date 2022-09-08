@@ -36,7 +36,7 @@ assert reg in [
 ]
 
 NETWORK_FILE_PATH = (
-    f"/home/francois/Workspace/posts_priority_queue//data/{reg}/{reg}.parquet"
+    f"/home/francois/Workspace/posts_priority_queue/data/{reg}/{reg}.parquet"
 )
 IDX_FROM = 1000
 
