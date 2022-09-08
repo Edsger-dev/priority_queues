@@ -36,8 +36,6 @@ Priority queues for some path algorithms
 | graph-tool | 5.87 | 6.94 |
 | priority_queues | 0.56 | 0.94 |
 
-* Load the Graph into specific format
-
 * shortest path
 
 |  | CTR | USA |
