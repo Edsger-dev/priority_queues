@@ -1,5 +1,11 @@
+"""
+https://askubuntu.com/questions/1052644/prevent-other-processes-for-performance
+sudo nice -n -20 /home/francois/miniconda3/envs/algo/bin/python perf_01.py -n USA
+"""
+
 
 from argparse import ArgumentParser
+import gc
 import os
 from time import perf_counter
 
@@ -77,6 +83,9 @@ end = perf_counter()
 elapsed_time = end - start
 print(f"SciPy Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
 
+del data, row, col, graph_coo, graph_csr
+gc.collect()
+
 # Graph-tools
 # ===========
 
@@ -113,6 +122,9 @@ print(f"GT Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
 assert np.allclose(
     dist_matrix_gt, dist_matrix_ref, rtol=1e-05, atol=1e-08, equal_nan=True
 )
+
+del g, eprop_t, dist, dist_matrix_gt
+gc.collect()
 
 # NetworkKit
 # ==========
@@ -168,6 +180,8 @@ assert np.allclose(
     dist_matrix_nk, dist_matrix_ref, rtol=1e-05, atol=1e-08, equal_nan=True
 )
 
+del g, dijkstra, dist_matrix, dist_matrix_nk
+gc.collect()
 
 # priority_queues
 # ===============
@@ -191,3 +205,6 @@ time_df = sp.get_timings()
 assert np.allclose(
     dist_matrix_pq, dist_matrix_ref, rtol=1e-05, atol=1e-08, equal_nan=True
 )
+
+del sp, dist_matrix_pq
+gc.collect()
