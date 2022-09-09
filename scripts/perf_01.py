@@ -11,6 +11,7 @@ from time import perf_counter
 
 import graph_tool as gt
 from graph_tool import topology
+from igraph import Graph
 import networkit as nk
 import numpy as np
 import pandas as pd
@@ -85,6 +86,30 @@ print(f"SciPy Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
 
 del data, row, col, graph_coo, graph_csr
 gc.collect()
+
+# iGraph
+# ======
+
+start = perf_counter()
+g = Graph.DataFrame(edges_df, directed=True)
+end = perf_counter()
+elapsed_time = end - start
+print(f"iG Load the graph - Elapsed time: {elapsed_time:6.2f} s")
+
+start = perf_counter()
+
+distances = g.distances(source=IDX_FROM, target=None, weights="weight", mode="out")
+dist_matrix_ig = np.asarray(distances[0])
+
+end = perf_counter()
+elapsed_time = end - start
+print(f"iG Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
+
+assert np.allclose(
+    dist_matrix_ig, dist_matrix_ref, rtol=1e-05, atol=1e-08, equal_nan=True
+)
+
+del g, dist_matrix_ig
 
 # Graph-tools
 # ===========
@@ -205,6 +230,7 @@ time_df = sp.get_timings()
 assert np.allclose(
     dist_matrix_pq, dist_matrix_ref, rtol=1e-05, atol=1e-08, equal_nan=True
 )
+
 
 del sp, dist_matrix_pq
 gc.collect()
