@@ -1,6 +1,22 @@
 # priority_queues
 Priority queues for some path algorithms
 
+## Tests
+
+Run from the home directory:
+
+```Python
+$ pytest
+```
+
+To execute a single test:
+
+```Python
+$ py.test tests/test_pq_bin_heaps.py -k 'test_init_01'
+```
+
+
+
 ## Road networks
 
 |  | vertices | edges |
