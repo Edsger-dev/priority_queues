@@ -47,6 +47,8 @@ edges_df.rename(
 vertex_count = edges_df[["source", "target"]].max().max() + 1
 print(f"{len(edges_df)} edges and {vertex_count} vertices")
 
+print(edges_df.head())
+
 # NetworkX
 # ========
 
@@ -64,6 +66,5 @@ end = perf_counter()
 elapsed_time = end - start
 print(f"nx load graph - Elapsed time: {elapsed_time:6.2f} s")
 
-
-distance = nx.single_source_dijkstra(G=graph, source=IDX_FROM, weight='weight')
-print(distance)
+distance_dict = nx.single_source_dijkstra_path_length(G=graph, source=IDX_FROM, weight='weight')
+print(distance_dict)
