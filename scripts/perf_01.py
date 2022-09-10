@@ -172,7 +172,6 @@ else:
     for row in edges_df.itertuples():
         g.addEdge(row.source, row.target, w=row.weight)
 
-
     nk.graphio.writeGraph(g, networkit_file_path, nk_file_format)
 
 dijkstra = nk.distance.Dijkstra(
