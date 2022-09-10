@@ -47,8 +47,6 @@ edges_df.rename(
 vertex_count = edges_df[["source", "target"]].max().max() + 1
 print(f"{len(edges_df)} edges and {vertex_count} vertices")
 
-print(edges_df.head())
-
 # NetworkX
 # ========
 
@@ -62,9 +60,44 @@ graph = nx.from_pandas_edgelist(
     create_using=nx.DiGraph,
 )
 
+# print(graph.edges(data=True))
+
 end = perf_counter()
 elapsed_time = end - start
 print(f"nx load graph - Elapsed time: {elapsed_time:6.2f} s")
 
-distance_dict = nx.single_source_dijkstra_path_length(G=graph, source=IDX_FROM, weight='weight')
-print(distance_dict)
+start = perf_counter()
+
+distance_dict = nx.single_source_dijkstra_path_length(
+    G=graph, source=IDX_FROM, weight="weight"
+)
+dist_matrix_ref = np.inf * np.ones(vertex_count, dtype=np.float64)
+dist_matrix_ref[list(distance_dict.keys())] = list(distance_dict.values())
+
+end = perf_counter()
+elapsed_time = end - start
+print(f"nx Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
+
+
+# In-house
+# ========
+
+# without graph permutation
+# return_inf=True
+start = perf_counter()
+sp = ShortestPath(edges_df, orientation="one-to-all", check_edges=False, permute=False)
+end = perf_counter()
+elapsed_time = end - start
+print(f"PQ Prepare the data - Elapsed time: {elapsed_time:6.2f} s")
+
+start = perf_counter()
+dist_matrix = sp.run(vertex_idx=IDX_FROM, return_inf=True, return_Series=False)
+end = perf_counter()
+elapsed_time = end - start
+print(f"PQ Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
+
+
+assert np.allclose(dist_matrix, dist_matrix_ref, rtol=1e-05, atol=1e-08, equal_nan=True)
+
+
+print("done")
