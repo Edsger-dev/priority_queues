@@ -6,7 +6,6 @@ https://askubuntu.com/questions/1052644/prevent-other-processes-for-performance
 sudo nice -n -20 /home/francois/miniconda3/envs/algo/bin/python perf_01.py -n USA
 """
 
-
 from argparse import ArgumentParser
 import os
 from time import perf_counter
@@ -15,6 +14,7 @@ import graph_tool as gt
 from graph_tool import topology
 from igraph import Graph
 import networkit as nk
+import networkx as nx
 import numpy as np
 import pandas as pd
 from scipy.sparse import coo_array, csr_matrix
@@ -36,7 +36,7 @@ parser.add_argument(
     "-l",
     "--library",
     dest="library_name",
-    help='library name, must be "SP" (SciPy), "PQ" (priority_queues), "IG" (iGraph), "GT" (graph-tools), "NK" (NetworkKit)',
+    help='library name, must be "SP" (SciPy), "PQ" (priority_queues), "IG" (iGraph), "GT" (graph-tools), "NK" (NetworkKit), "NX" (NetworkX)',
     metavar="TXT",
     type=str,
     required=True,
@@ -58,7 +58,7 @@ assert reg in [
     "USA",
 ]
 lib = args.library_name.upper()
-assert lib in ["SP", "PQ", "IG", "GT", "NK"]
+assert lib in ["SP", "PQ", "IG", "GT", "NK", "NX"]
 
 # load the edges as a dataframe
 
@@ -224,3 +224,33 @@ elif lib == "NK":
     end = perf_counter()
     elapsed_time = end - start
     print(f"NK Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
+
+elif lib == "NX":
+
+    start = perf_counter()
+
+    graph = nx.from_pandas_edgelist(
+        edges_df,
+        source="source",
+        target="target",
+        edge_attr="weight",
+        create_using=nx.DiGraph,
+    )
+
+    # print(graph.edges(data=True))
+
+    end = perf_counter()
+    elapsed_time = end - start
+    print(f"nx load graph - Elapsed time: {elapsed_time:6.2f} s")
+
+    start = perf_counter()
+
+    distance_dict = nx.single_source_dijkstra_path_length(
+        G=graph, source=IDX_FROM, weight="weight"
+    )
+    dist_matrix = np.inf * np.ones(vertex_count, dtype=np.float64)
+    dist_matrix[list(distance_dict.keys())] = list(distance_dict.values())
+
+    end = perf_counter()
+    elapsed_time = end - start
+    print(f"nx Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
