@@ -175,19 +175,14 @@ else:
 
     nk.graphio.writeGraph(g, networkit_file_path, nk_file_format)
 
-end = perf_counter()
-elapsed_time = end - start
-print(f"NK Load the graph - Elapsed time: {elapsed_time:6.2f} s")
-
-start = perf_counter()
-
 dijkstra = nk.distance.Dijkstra(
     g, IDX_FROM, storePaths=False, storeNodesSortedByDistance=False
 )
 
 end = perf_counter()
 elapsed_time = end - start
-print(f"NK Dijkstra init - Elapsed time: {elapsed_time:6.2f} s")
+print(f"NK Load the graph - Elapsed time: {elapsed_time:6.2f} s")
+
 
 # Run
 start = perf_counter()
