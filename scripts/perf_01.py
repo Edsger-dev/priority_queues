@@ -30,6 +30,7 @@ parser.add_argument(
     type=str,
     required=True,
 )
+
 args = parser.parse_args()
 reg = args.network_name.upper()
 assert reg in [
@@ -85,6 +86,32 @@ elapsed_time = end - start
 print(f"SciPy Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
 
 del data, row, col, graph_coo, graph_csr
+gc.collect()
+
+# priority_queues
+# ===============
+
+start = perf_counter()
+sp = ShortestPath(edges_df, orientation="one-to-all", check_edges=False, permute=False)
+end = perf_counter()
+elapsed_time = end - start
+print(f"PQ Prepare the data - Elapsed time: {elapsed_time:6.2f} s")
+
+start = perf_counter()
+dist_matrix_pq = sp.run(vertex_idx=IDX_FROM, return_inf=True, return_Series=False)
+end = perf_counter()
+elapsed_time = end - start
+print(f"PQ Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
+
+time_df = sp.get_timings()
+# print(time_df)
+
+
+assert np.allclose(
+    dist_matrix_pq, dist_matrix_ref, rtol=1e-05, atol=1e-08, equal_nan=True
+)
+
+del sp, dist_matrix_pq
 gc.collect()
 
 # iGraph
@@ -200,31 +227,4 @@ assert np.allclose(
 )
 
 del g, dijkstra, dist_matrix, dist_matrix_nk
-gc.collect()
-
-# priority_queues
-# ===============
-
-start = perf_counter()
-sp = ShortestPath(edges_df, orientation="one-to-all", check_edges=False, permute=False)
-end = perf_counter()
-elapsed_time = end - start
-print(f"PQ Prepare the data - Elapsed time: {elapsed_time:6.2f} s")
-
-start = perf_counter()
-dist_matrix_pq = sp.run(vertex_idx=IDX_FROM, return_inf=True, return_Series=False)
-end = perf_counter()
-elapsed_time = end - start
-print(f"PQ Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
-
-time_df = sp.get_timings()
-# print(time_df)
-
-
-assert np.allclose(
-    dist_matrix_pq, dist_matrix_ref, rtol=1e-05, atol=1e-08, equal_nan=True
-)
-
-
-del sp, dist_matrix_pq
 gc.collect()
