@@ -120,7 +120,7 @@ elif lib == "PQ":
     elapsed_time = end - start
     print(f"PQ Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
 
-    time_df = sp.get_timings()
+    # time_df = sp.get_timings()
     # print(time_df)
 
 

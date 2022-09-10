@@ -37,6 +37,7 @@ sp = ShortestPath(
     weight="weight",
     orientation="one-to-all",
     check_edges=True,
+    permute=False
 )
 path_lengths = sp.run(vertex_idx=0)
 
