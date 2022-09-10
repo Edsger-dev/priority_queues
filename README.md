@@ -59,3 +59,16 @@ $ py.test tests/test_pq_bin_heaps.py -k 'test_init_01'
 | SciPy | 10.79 | 15.80 |
 | graph-tool | 6.31| 8.71 |
 | priority_queues | 4.27 | 5.90 |
+
+### commit 66b4b7bccf628d8532878c1edf405de42d3f606a
+
+* shortest path
+
+|  | CTR | USA |
+|---|---:|---:|
+| NetworkX | 56.51 | N.A. |
+| iGraph | 13.68 | 24.20 |
+| SciPy | 11.12 | 15.90 |
+| graph-tool | 7.52 | 7.33 |
+| NetworKit | 5.68 | 7.49 |
+| priority_queues | 4.35 | 5.87 |
