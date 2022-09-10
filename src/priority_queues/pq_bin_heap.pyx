@@ -248,7 +248,7 @@ cdef inline void _min_heapify(
     """
     cdef: 
         ssize_t l, r, i = node_idx, s
-        DTYPE_t key_i, key_l, key_s
+        # DTYPE_t key_i, key_l, key_s
 
     while True:
 
