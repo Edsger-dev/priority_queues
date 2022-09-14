@@ -165,3 +165,68 @@ def test_run_02(random_seed=124, n=1000):
     dist_matrix = path_lengths.values
 
     np.testing.assert_array_almost_equal(dist_matrix, dist_matrix_ref, decimal=8)
+
+
+def test_run_03(random_seed=124, n=100, index_offset=10):
+    """Vertex indices with offset."""
+
+    single_source_index = 0 + index_offset
+    source = np.random.randint(0, int(n / 5), n) + index_offset
+    target = np.random.randint(0, int(n / 5), n) + index_offset
+    weight = np.random.rand(n)
+    edges_df = pd.DataFrame(data={"source": source, "target": target, "weight": weight})
+    edges_df.drop_duplicates(subset=["source", "target"], inplace=True)
+    edges_df = edges_df.loc[edges_df["source"] != edges_df["target"]]
+    edges_df.reset_index(drop=True, inplace=True)
+
+    # SciPy
+    vertex_count = edges_df[["source", "target"]].max().max() + 1
+    data = edges_df["weight"].values
+    row = edges_df["source"].values
+    col = edges_df["target"].values
+    graph_coo = coo_array((data, (row, col)), shape=(vertex_count, vertex_count))
+    graph_csr = graph_coo.tocsr()
+    dist_matrix_ref = dijkstra(
+        csgraph=graph_csr,
+        directed=True,
+        indices=single_source_index,
+        return_predecessors=False,
+    )
+
+    # In-house
+    # without graph permutation
+    # return_inf=True
+    sp = ShortestPath(
+        edges_df, orientation="one-to-all", check_edges=True, permute=True
+    )
+    path_lengths = sp.run(vertex_idx=single_source_index, return_inf=True)
+    dist_matrix = path_lengths.values
+    # not really understanding what happens when computing the difference of
+    # 2 vectors with inf values
+    np.testing.assert_array_almost_equal(
+        dist_matrix, dist_matrix_ref[index_offset:], decimal=8
+    )
+
+    dist_matrix_ref = np.where(
+        dist_matrix_ref > DTYPE_INF_PY, DTYPE_INF_PY, dist_matrix_ref
+    )
+
+    # without graph permutation
+    # return_inf=False
+    path_lengths = sp.run(vertex_idx=single_source_index)
+    dist_matrix = path_lengths.values
+    np.testing.assert_array_almost_equal(
+        dist_matrix, dist_matrix_ref[index_offset:], decimal=8
+    )
+
+    # with graph permutation
+    # return_inf=False
+    sp = ShortestPath(
+        edges_df, orientation="one-to-all", check_edges=True, permute=True
+    )
+    path_lengths = sp.run(vertex_idx=single_source_index)
+    dist_matrix = path_lengths.values
+
+    np.testing.assert_array_almost_equal(
+        dist_matrix, dist_matrix_ref[index_offset:], decimal=8
+    )
