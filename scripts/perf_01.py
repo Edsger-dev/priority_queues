@@ -49,14 +49,11 @@ assert reg in [
 ]
 
 NETWORK_FILE_PATH = (
-    f"/home/francois/Workspace/posts_priority_queue/data/{reg}/{reg}.parquet"
+    f"/home/francois/Data/Disk_1/DIMACS_road_networks/{reg}/USA-road-t.{reg}.gr.parquet"
 )
 IDX_FROM = 1000
 
 edges_df = pd.read_parquet(NETWORK_FILE_PATH)
-edges_df.rename(
-    columns={"id_from": "source", "id_to": "target", "tt": "weight"}, inplace=True
-)
 vertex_count = edges_df[["source", "target"]].max().max() + 1
 print(f"{len(edges_df)} edges and {vertex_count} vertices")
 
@@ -185,7 +182,7 @@ start = perf_counter()
 
 nk_file_format = nk.graphio.Format.NetworkitBinary
 networkit_file_path = (
-    f"/home/francois/Workspace/posts_priority_queue/data/{reg}/{reg}.NetworkitBinary"
+    f"/home/francois/Data/Disk_1/DIMACS_road_networks/{reg}/{reg}.NetworkitBinary"
 )
 
 if os.path.exists(networkit_file_path):
