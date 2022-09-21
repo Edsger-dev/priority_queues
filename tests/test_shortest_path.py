@@ -115,6 +115,7 @@ def test_run_01(braess):
 
 def test_run_02(random_seed=124, n=1000):
 
+    np.random.seed(random_seed)
     source = np.random.randint(0, int(n / 5), n)
     target = np.random.randint(0, int(n / 5), n)
     weight = np.random.rand(n)
@@ -171,6 +172,7 @@ def test_run_03(random_seed=124, n=100, index_offset=10):
     """Vertex indices with offset."""
 
     single_source_index = 0 + index_offset
+    np.random.seed(random_seed)
     source = np.random.randint(0, int(n / 5), n) + index_offset
     target = np.random.randint(0, int(n / 5), n) + index_offset
     weight = np.random.rand(n)
