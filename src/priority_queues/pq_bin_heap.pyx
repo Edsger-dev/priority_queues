@@ -111,7 +111,7 @@ cdef void min_heap_insert(
     * the element bheap.elements[element_idx] is not in the heap
     * its new key is smaller than DTYPE_INF
     """
-    cdef ssize_t node_idx = bheap.size
+    cdef ssize_t node_idx = bheap.size + 1
 
     bheap.size += 1
     bheap.elements[element_idx].state = IN_HEAP
@@ -194,10 +194,10 @@ cdef ssize_t extract_min(BinaryHeap* bheap) nogil:
     """
     cdef: 
         ssize_t element_idx = bheap.A[1]  # min element index
-        ssize_t node_idx = bheap.size - 1  # last leaf node index
+        ssize_t node_idx = bheap.size   # last leaf node index
 
     # exchange the root node with the last leaf node
-    _exchange_nodes(bheap, 0, node_idx)
+    _exchange_nodes(bheap, 1, node_idx)
 
     # remove this element from the heap
     bheap.elements[element_idx].state = SCANNED
