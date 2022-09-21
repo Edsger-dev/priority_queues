@@ -78,6 +78,8 @@ class ShortestPath:
         self.time = {}
         self._return_Series = True
 
+        edges_df[["source", "target"]] += 1
+
         t = Timer()
         t.start()
         # load the edges
@@ -248,6 +250,9 @@ class ShortestPath:
             vertex_new = vertex_idx
         t.stop()
         self.time["check the source/target vertex"] = t.interval
+
+
+        vertex_new += 1
 
         # compute path length
         t = Timer()

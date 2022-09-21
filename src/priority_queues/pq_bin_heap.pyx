@@ -31,11 +31,11 @@ cdef void init_heap(
 
     bheap.length = length
     bheap.size = 0
-    bheap.A = <ssize_t*> malloc(length * sizeof(ssize_t))
-    bheap.elements = <Element*> malloc(length * sizeof(Element))
+    bheap.A = <ssize_t*> malloc((length + 1) * sizeof(ssize_t))
+    bheap.elements = <Element*> malloc((length + 1) * sizeof(Element))
 
     for i in range(length):
-        bheap.A[i] = length
+        bheap.A[i] = length + 1
         _initialize_element(bheap, i)
 
 
@@ -55,15 +55,15 @@ cdef void init_heap_para(
 
     bheap.length = length
     bheap.size = 0
-    bheap.A = <ssize_t*> malloc(length * sizeof(ssize_t))
-    bheap.elements = <Element*> malloc(length * sizeof(Element))
+    bheap.A = <ssize_t*> malloc((length + 1) * sizeof(ssize_t))
+    bheap.elements = <Element*> malloc((length + 1) * sizeof(Element))
 
     for i in prange(
         length, 
         schedule='static', 
         nogil=True, 
         num_threads=num_threads):
-        bheap.A[i] = length
+        bheap.A[i] = length + 1
         _initialize_element(bheap, i)
 
 
@@ -79,7 +79,7 @@ cdef inline void _initialize_element(
     """
     bheap.elements[element_idx].key = DTYPE_INF
     bheap.elements[element_idx].state = NOT_IN_HEAP
-    bheap.elements[element_idx].node_idx = bheap.length
+    bheap.elements[element_idx].node_idx = bheap.length + 1
 
 
 cdef void free_heap(
@@ -158,7 +158,7 @@ cdef DTYPE_t peek(BinaryHeap* bheap) nogil:
     * bheap.size > 0
     * heap is heapified
     """
-    return bheap.elements[bheap.A[0]].key
+    return bheap.elements[bheap.A[1]].key
 
 
 cdef bint is_empty(BinaryHeap* bheap) nogil:
@@ -193,7 +193,7 @@ cdef ssize_t extract_min(BinaryHeap* bheap) nogil:
     * bheap.size > 0
     """
     cdef: 
-        ssize_t element_idx = bheap.A[0]  # min element index
+        ssize_t element_idx = bheap.A[1]  # min element index
         ssize_t node_idx = bheap.size - 1  # last leaf node index
 
     # exchange the root node with the last leaf node
@@ -202,11 +202,11 @@ cdef ssize_t extract_min(BinaryHeap* bheap) nogil:
     # remove this element from the heap
     bheap.elements[element_idx].state = SCANNED
     bheap.elements[element_idx].node_idx = bheap.length
-    bheap.A[node_idx] = bheap.length
+    bheap.A[node_idx] = bheap.length + 1
     bheap.size -= 1
 
     # reorder the tree elements from the root node
-    _min_heapify(bheap, 0)
+    _min_heapify(bheap, 1)
 
     return element_idx
 
@@ -252,8 +252,8 @@ cdef inline void _min_heapify(
 
     while True:
 
-        l =  2 * i + 1  
-        # l = (i << 1) + 1
+        l =  2 * i  
+        # l = i << 1
         r = l + 1
         
         # key_i = bheap.elements[bheap.A[i]].key
@@ -293,14 +293,14 @@ cdef inline void _min_heapify(
         #         s = l
 
         s = i
-        if (r < bheap.size):
+        if (r <= bheap.size):
             if (bheap.elements[bheap.A[r]].key < bheap.elements[bheap.A[s]].key):
                 s = r
             if (bheap.elements[bheap.A[l]].key < bheap.elements[bheap.A[s]].key):
                 s = l
         else:
             if (
-                (l < bheap.size) and 
+                (l <= bheap.size) and 
                 (bheap.elements[bheap.A[l]].key < bheap.elements[bheap.A[s]].key)
             ):
                 s = l
@@ -348,9 +348,9 @@ cdef inline void _decrease_key_from_node_index(
         DTYPE_t key_j
 
     bheap.elements[bheap.A[i]].key = key_new
-    while i > 0: 
-        j = (i - 1) // 2  
-        # j = (i - 1) >> 1
+    while i > 1: 
+        j = i // 2  
+        # j = i >> 1
         key_j = bheap.elements[bheap.A[j]].key
         if key_j > key_new:
             _exchange_nodes(bheap, i, j)
@@ -376,7 +376,7 @@ cdef cnp.ndarray copy_keys_to_numpy_para(
     * cnp.ndarray : NumPy array with all the keys
     """
 
-    path_lengths = cnp.ndarray(vertex_count, dtype=DTYPE)
+    path_lengths = cnp.ndarray(vertex_count - 1, dtype=DTYPE)
 
     cdef:
         int i  # loop counter
@@ -388,6 +388,6 @@ cdef cnp.ndarray copy_keys_to_numpy_para(
         schedule='static', 
         nogil=True, 
         num_threads=num_threads):
-        path_lengths_view[i] = bheap.elements[i].key
+        path_lengths_view[i] = bheap.elements[i + 1].key
 
     return path_lengths
