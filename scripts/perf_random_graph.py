@@ -1,20 +1,32 @@
-
-from argparse import ArgumentParser
 import gc
 import os
+from argparse import ArgumentParser
 from time import perf_counter
 
 import numpy as np
 import pandas as pd
+from priority_queues.shortest_path import ShortestPath
 from scipy.sparse import coo_array, csr_matrix
 from scipy.sparse.csgraph import dijkstra
 
-from priority_queues.shortest_path import ShortestPath
+parser = ArgumentParser(description="Command line interface to perf_random_graph.py")
+parser.add_argument(
+    "-n",
+    dest="network_size",
+    help="Initial random network size : number of edges before removing parallel edges and loops",
+    type=int,
+    required=False,
+    default=1000,
+)
+parser.add_argument(
+    "-r", dest="random_seed", help="Random seed", type=int, required=False, default=124
+)
 
+args = parser.parse_args()
+n = args.network_size
+rs = args.random_seed
 
-n = 100000
-
-np.random.seed(124)
+np.random.seed(rs)
 source = np.random.randint(0, int(n / 5), n)
 target = np.random.randint(0, int(n / 5), n)
 weight = np.random.rand(n)
@@ -23,7 +35,9 @@ edges_df.drop_duplicates(subset=["source", "target"], inplace=True)
 edges_df = edges_df.loc[edges_df["source"] != edges_df["target"]]
 edges_df.reset_index(drop=True, inplace=True)
 vertex_count = edges_df[["source", "target"]].max().max() + 1
-IDX_FROM = 10
+
+idx_from = edges_df.source.min()
+
 
 # SciPy
 # =====
@@ -43,14 +57,12 @@ print(f"SciPy Prepare the data - Elapsed time: {elapsed_time:6.2f} s")
 start = perf_counter()
 
 dist_matrix_ref = dijkstra(
-    csgraph=graph_csr, directed=True, indices=IDX_FROM, return_predecessors=False
+    csgraph=graph_csr, directed=True, indices=idx_from, return_predecessors=False
 )
 
 end = perf_counter()
 elapsed_time = end - start
 print(f"SciPy Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
-
-print(dist_matrix_ref[:100])
 
 del data, row, col, graph_coo, graph_csr
 gc.collect()
@@ -65,17 +77,10 @@ elapsed_time = end - start
 print(f"PQ Prepare the data - Elapsed time: {elapsed_time:6.2f} s")
 
 start = perf_counter()
-dist_matrix_pq = sp.run(vertex_idx=IDX_FROM, return_inf=True, return_Series=False)
+dist_matrix_pq = sp.run(vertex_idx=idx_from, return_inf=True, return_Series=False)
 end = perf_counter()
 elapsed_time = end - start
 print(f"PQ Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
-
-print(dist_matrix_pq[:100])
-
-
-time_df = sp.get_timings()
-# print(time_df)
-
 
 assert np.allclose(
     dist_matrix_pq, dist_matrix_ref, rtol=1e-05, atol=1e-08, equal_nan=True
