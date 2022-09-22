@@ -63,7 +63,7 @@ assert lib in ["SP", "PQ", "IG", "GT", "NK", "NX"]
 # load the edges as a dataframe
 
 NETWORK_FILE_PATH = (
-    f"/home/francois/Workspace/posts_priority_queue/data/{reg}/{reg}.parquet"
+    f"/home/francois/Data/Disk_1/DIMACS_road_networks/{reg}/USA-road-t.{reg}.gr.parquet"
 )
 IDX_FROM = 1000
 

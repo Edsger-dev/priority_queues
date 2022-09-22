@@ -100,7 +100,7 @@ end = perf_counter()
 elapsed_time = end - start
 print(f"PQ Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
 
-time_df = sp.get_timings()
+# time_df = sp.get_timings()
 # print(time_df)
 
 
@@ -166,7 +166,6 @@ dist_matrix_gt = dist.a
 end = perf_counter()
 elapsed_time = end - start
 print(f"GT Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
-
 
 assert np.allclose(
     dist_matrix_gt, dist_matrix_ref, rtol=1e-05, atol=1e-08, equal_nan=True
