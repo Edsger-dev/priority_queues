@@ -78,14 +78,13 @@ class ShortestPath:
         self.time = {}
         self._return_Series = True
 
-        edges_df[["source", "target"]] += 1
-
         t = Timer()
         t.start()
         # load the edges
         if check_edges:
             self._check_edges(edges_df, source, target, weight)
-        self._edges = edges_df
+        self._edges = edges_df.copy(deep=True)
+        self._edges[["source", "target"]] += 1
         self.n_edges = len(self._edges)
         t.stop()
         self.time["load the edges"] = t.interval
