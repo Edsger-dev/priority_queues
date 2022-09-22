@@ -26,8 +26,8 @@ def convert_sorted_graph_to_csr(edges_df, source, target, weight, vertex_count):
     """
 
     data = edges_df[weight].values
-    row = edges_df[source].values
-    col = edges_df[target].values
+    row = edges_df[source].values + 1
+    col = edges_df[target].values + 1
     graph_coo = coo_array(
         (data, (row, col)), dtype=DTYPE_PY, shape=(vertex_count, vertex_count)
     )
@@ -54,8 +54,8 @@ def convert_sorted_graph_to_csc(edges_df, source, target, weight, vertex_count):
     """
 
     data = edges_df[weight].values
-    row = edges_df[source].values
-    col = edges_df[target].values
+    row = edges_df[source].values + 1
+    col = edges_df[target].values + 1
     graph_coo = coo_array(
         (data, (row, col)), dtype=DTYPE_PY, shape=(vertex_count, vertex_count)
     )
@@ -83,8 +83,7 @@ class ShortestPath:
         # load the edges
         if check_edges:
             self._check_edges(edges_df, source, target, weight)
-        self._edges = edges_df.copy(deep=True)
-        self._edges[["source", "target"]] += 1
+        self._edges = edges_df
         self.n_edges = len(self._edges)
         t.stop()
         self.time["load the edges"] = t.interval
@@ -117,14 +116,14 @@ class ShortestPath:
         self._orientation = orientation
         if self._orientation == "one-to-all":
             graph_csr = convert_sorted_graph_to_csr(
-                self._edges, source, target, weight, self.n_vertices
+                self._edges, source, target, weight, self.n_vertices + 1
             )
             self._indices = graph_csr.indices.astype(np.intp)
             self._indptr = graph_csr.indptr.astype(np.intp)
             self._edge_weights = graph_csr.data
         else:
             graph_csc = convert_sorted_graph_to_csc(
-                self._edges, source, target, weight, self.n_vertices
+                self._edges, source, target, weight, self.n_vertices + 1
             )
             self._indices = graph_csc.indices.astype(np.intp)
             self._indptr = graph_csc.indptr.astype(np.intp)
