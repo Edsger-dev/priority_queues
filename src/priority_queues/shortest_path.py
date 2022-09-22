@@ -105,7 +105,7 @@ class ShortestPath:
             self._vertices = self._permute_graph(source, target)
             self.n_vertices = len(self._vertices)
         else:
-            self.n_vertices = self._edges[[source, target]].max().max() + 1
+            self.n_vertices = self._edges[[source, target]].max().max() + 2
         t.stop()
         self.time["reindex the vertices"] = t.interval
 
@@ -116,14 +116,14 @@ class ShortestPath:
         self._orientation = orientation
         if self._orientation == "one-to-all":
             graph_csr = convert_sorted_graph_to_csr(
-                self._edges, source, target, weight, self.n_vertices + 1
+                self._edges, source, target, weight, self.n_vertices
             )
             self._indices = graph_csr.indices.astype(np.intp)
             self._indptr = graph_csr.indptr.astype(np.intp)
             self._edge_weights = graph_csr.data
         else:
             graph_csc = convert_sorted_graph_to_csc(
-                self._edges, source, target, weight, self.n_vertices + 1
+                self._edges, source, target, weight, self.n_vertices
             )
             self._indices = graph_csc.indices.astype(np.intp)
             self._indptr = graph_csc.indptr.astype(np.intp)
