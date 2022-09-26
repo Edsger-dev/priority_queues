@@ -53,7 +53,7 @@ def read_travel_time_graph(file_path):
         names=["a", "source", "target", "weight"],
         usecols=["source", "target", "weight"],
         skiprows=header_size,
-        dtype={"source": np.uintc, "target": np.uintc, "weight": np.uintc},
+        dtype={"source": np.int64, "target": np.int64, "weight": np.float64},
     )
 
     assert len(df) == edge_count
