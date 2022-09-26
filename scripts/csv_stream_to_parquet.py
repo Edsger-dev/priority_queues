@@ -63,7 +63,7 @@ print(f"edge_count : {edge_count}")
 # ISSUE WITH (Int(bitWidth=64, isSigned=false))
 # NOK with Hyper
 
-# (tableau3)  ✘ francois@francois-P64KV7  ~/Data/Disk_1/OSMR  parq osm-bawu/osm-bawu.gr.parquet --schema
+# $ parq osm-bawu/osm-bawu.gr.parquet --schema
 
 #  # Schema
 #  <pyarrow._parquet.ParquetSchema object at 0x7f010a9e9100>
