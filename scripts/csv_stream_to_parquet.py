@@ -59,6 +59,29 @@ for line in lines:
         break
 print(f"edge_count : {edge_count}")
 
+# =======================
+# ISSUE WITH (Int(bitWidth=64, isSigned=false))
+# NOK with Hyper
+
+# (tableau3)  ✘ francois@francois-P64KV7  ~/Data/Disk_1/OSMR  parq osm-bawu/osm-bawu.gr.parquet --schema
+
+#  # Schema
+#  <pyarrow._parquet.ParquetSchema object at 0x7f010a9e9100>
+# required group field_id=-1 schema {
+#   optional int64 field_id=-1 source (Int(bitWidth=64, isSigned=false));
+#   optional int64 field_id=-1 target (Int(bitWidth=64, isSigned=false));
+#   optional double field_id=-1 weight;
+#   optional int64 field_id=-1 __index_level_0__;
+# }
+schema = pa.schema(
+    [
+        ("source", pa.int64()),
+        ("target", pa.int64()),
+        ("weight", pa.float64()),
+    ]
+)
+# =======================
+
 chunksize = 100_000_000
 writer = None
 counter = 0
@@ -85,7 +108,9 @@ for df in pd.read_csv(
     df = df[df["source"] != df["target"]]  # remove loops
     df[["source", "target"]] -= 1  # switch to 0-based indices
 
-    table = pa.Table.from_pandas(df, columns=["source", "target", "weight"])
+    table = pa.Table.from_pandas(
+        df, schema=schema  #  columns=["source", "target", "weight"],
+    )
     if writer is None:
         writer = pq.ParquetWriter(parquet_file_path, table.schema, compression=None)
 
