@@ -1,6 +1,8 @@
 """
 https://askubuntu.com/questions/1052644/prevent-other-processes-for-performance
 sudo nice -n -20 /home/francois/miniconda3/envs/algo/bin/python perf_01.py -n USA
+
+https://www.timlrx.com/blog/benchmark-of-popular-graph-network-packages-v2
 """
 
 
