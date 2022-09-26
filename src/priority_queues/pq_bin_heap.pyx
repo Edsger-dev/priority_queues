@@ -248,16 +248,16 @@ cdef inline void _min_heapify(
     """
     cdef: 
         ssize_t l, r, i = node_idx, s
-        # DTYPE_t key_i, key_l, key_s
+        # DTYPE_t key_i, key_s, key_r
 
     while True:
 
-        l =  2 * i  
-        # l = i << 1
+        # l =  2 * i  
+        l = i << 1
         r = l + 1
         
         # key_i = bheap.elements[bheap.A[i]].key
-        # if (l < bheap.size):
+        # if (l <= bheap.size):
         #     key_l = bheap.elements[bheap.A[l]].key
         #     if (key_l < key_i):
         #         s = l
@@ -270,7 +270,7 @@ cdef inline void _min_heapify(
         #     key_s = key_i
 
         # if (
-        #     (r < bheap.size) and 
+        #     (r <= bheap.size) and 
         #     (bheap.elements[bheap.A[r]].key < key_s)
         # ):
         #     s = r
@@ -278,7 +278,7 @@ cdef inline void _min_heapify(
         # key_i = bheap.elements[bheap.A[i]].key
         # s = i
         # key_s = key_i
-        # if (r < bheap.size):
+        # if (r <= bheap.size):
         #     key_r = bheap.elements[bheap.A[r]].key
         #     if (key_r < key_i):
         #         s = r
@@ -287,8 +287,8 @@ cdef inline void _min_heapify(
         #         s = l
         # else:
         #     if (
-        #         (l < bheap.size) and 
-        #         (bheap.elements[bheap.A[l]].key < bheap.elements[bheap.A[s]].key)
+        #         (l <= bheap.size) and 
+        #         (bheap.elements[bheap.A[l]].key < key_s)
         #     ):
         #         s = l
 
@@ -306,18 +306,19 @@ cdef inline void _min_heapify(
                 s = l
 
         # if (
-        #     (l < bheap.size) and 
+        #     (l <= bheap.size) and 
         #     (bheap.elements[bheap.A[l]].key < bheap.elements[bheap.A[i]].key)
         # ):
         #     s = l
         # else:
         #     s = i
-
         # if (
-        #     (r < bheap.size) and 
+        #     (r <= bheap.size) and 
         #     (bheap.elements[bheap.A[r]].key < bheap.elements[bheap.A[s]].key)
         # ):
         #     s = r
+
+        # ==================================================================== #
 
         if s != i:
             _exchange_nodes(bheap, i, s)
@@ -349,8 +350,8 @@ cdef inline void _decrease_key_from_node_index(
 
     bheap.elements[bheap.A[i]].key = key_new
     while i > 1: 
-        j = i // 2  
-        # j = i >> 1
+        # j = i // 2  
+        j = i >> 1
         key_j = bheap.elements[bheap.A[j]].key
         if key_j > key_new:
             _exchange_nodes(bheap, i, j)
