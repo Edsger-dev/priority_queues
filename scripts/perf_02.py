@@ -42,8 +42,8 @@ parser.add_argument(
     required=True,
 )
 args = parser.parse_args()
-reg = args.network_name.upper()
-assert reg in [
+reg = args.network_name
+regions_usa = [
     "NY",
     "BAY",
     "COL",
@@ -57,17 +57,31 @@ assert reg in [
     "CTR",
     "USA",
 ]
+regions_eur = ["osm-bawu", "osm-ger", "osm-eur"]
+regions_all = regions_usa + regions_eur
+assert reg in regions_all
+
+continent = None
+if reg in regions_usa:
+    continent = "usa"
+else:
+    continent = "eur"
+
+
 lib = args.library_name.upper()
 assert lib in ["SP", "PQ", "IG", "GT", "NK", "NX"]
 
 # load the edges as a dataframe
 
-NETWORK_FILE_PATH = (
-    f"/home/francois/Workspace/posts_priority_queue/data/{reg}/{reg}.parquet"
-)
+if continent == "usa":
+    network_file_path = f"/home/francois/Data/Disk_1/DIMACS_road_networks/{reg}/USA-road-t.{reg}.gr.parquet"
+else:
+    network_file_path = f"/home/francois/Data/Disk_1/OSMR/{reg}/{reg}.gr.parquet"
+
+
 IDX_FROM = 1000
 
-edges_df = pd.read_parquet(NETWORK_FILE_PATH)
+edges_df = pd.read_parquet(network_file_path)
 edges_df.rename(
     columns={"id_from": "source", "id_to": "target", "tt": "weight"}, inplace=True
 )
@@ -191,7 +205,12 @@ elif lib == "NK":
     start = perf_counter()
 
     nk_file_format = nk.graphio.Format.NetworkitBinary
-    networkit_file_path = f"/home/francois/Workspace/posts_priority_queue/data/{reg}/{reg}.NetworkitBinary"
+    if continent == "usa":
+        networkit_file_path = f"/home/francois/Data/Disk_1/DIMACS_road_networks/{reg}/USA-road-t.{reg}.gr.NetworkitBinary"
+    else:
+        networkit_file_path = (
+            f"/home/francois/Data/Disk_1/OSMR/{reg}/{reg}.gr.NetworkitBinary"
+        )
 
     if os.path.exists(networkit_file_path):
 
