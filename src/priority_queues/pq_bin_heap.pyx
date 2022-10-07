@@ -6,6 +6,10 @@
     Binary heap implemented with a static array.
 
     Tree elements also stored in a static array.
+    
+author : François Pacull
+copyright : Architecture & Performance
+license : MIT
 """
 
 cimport numpy as cnp
