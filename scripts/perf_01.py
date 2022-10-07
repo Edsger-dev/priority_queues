@@ -34,8 +34,9 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
-reg = args.network_name.upper()
-assert reg in [
+reg = args.network_name
+
+regions_usa = [
     "NY",
     "BAY",
     "COL",
@@ -49,13 +50,26 @@ assert reg in [
     "CTR",
     "USA",
 ]
+regions_eur = ["osm-bawu", "osm-ger", "osm-eur"]
+regions_all = regions_usa + regions_eur
+assert reg in regions_all
 
-NETWORK_FILE_PATH = (
-    f"/home/francois/Data/Disk_1/DIMACS_road_networks/{reg}/USA-road-t.{reg}.gr.parquet"
-)
+continent = None
+if reg in regions_usa:
+    continent = "usa"
+else:
+    continent = "eur"
+
+# load the edges as a dataframe
+
+if continent == "usa":
+    network_file_path = f"/home/francois/Data/Disk_1/DIMACS_road_networks/{reg}/USA-road-t.{reg}.gr.parquet"
+else:
+    network_file_path = f"/home/francois/Data/Disk_1/OSMR/{reg}/{reg}.gr.parquet"
+
 IDX_FROM = 1000
 
-edges_df = pd.read_parquet(NETWORK_FILE_PATH)
+edges_df = pd.read_parquet(network_file_path)
 vertex_count = edges_df[["source", "target"]].max().max() + 1
 print(f"{len(edges_df)} edges and {vertex_count} vertices")
 
@@ -183,9 +197,12 @@ gc.collect()
 start = perf_counter()
 
 nk_file_format = nk.graphio.Format.NetworkitBinary
-networkit_file_path = (
-    f"/home/francois/Data/Disk_1/DIMACS_road_networks/{reg}/{reg}.NetworkitBinary"
-)
+if continent == "usa":
+    networkit_file_path = f"/home/francois/Data/Disk_1/DIMACS_road_networks/{reg}/USA-road-t.{reg}.gr.NetworkitBinary"
+else:
+    networkit_file_path = (
+        f"/home/francois/Data/Disk_1/OSMR/{reg}/{reg}.gr.NetworkitBinary"
+    )
 
 if os.path.exists(networkit_file_path):
 
