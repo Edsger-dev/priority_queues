@@ -2,9 +2,9 @@ from argparse import ArgumentParser
 from time import perf_counter
 
 import graph_tool as gt
-from graph_tool import topology
 import numpy as np
 import pandas as pd
+from graph_tool import topology
 
 from priority_queues.shortest_path import ShortestPath
 

@@ -8,6 +8,7 @@ from scipy.sparse.csgraph import dijkstra
 
 from priority_queues.shortest_path import ShortestPath
 
+
 result_ref = [0.0, 1.0, 2.0, 2.0]
 
 # SciPy

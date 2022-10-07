@@ -6,21 +6,22 @@ https://www.timlrx.com/blog/benchmark-of-popular-graph-network-packages-v2
 """
 
 
-from argparse import ArgumentParser
 import gc
 import os
+from argparse import ArgumentParser
 from time import perf_counter
 
 import graph_tool as gt
-from graph_tool import topology
-from igraph import Graph
 import networkit as nk
 import numpy as np
 import pandas as pd
+from graph_tool import topology
+from igraph import Graph
 from scipy.sparse import coo_array, csr_matrix
 from scipy.sparse.csgraph import dijkstra
 
 from priority_queues.shortest_path import ShortestPath
+
 
 parser = ArgumentParser(description="Command line interface to perf_01.py")
 parser.add_argument(

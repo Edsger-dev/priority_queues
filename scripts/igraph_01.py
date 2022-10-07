@@ -1,9 +1,9 @@
 from argparse import ArgumentParser
 from time import perf_counter
 
-from igraph import Graph
 import numpy as np
 import pandas as pd
+from igraph import Graph
 
 from priority_queues.shortest_path import ShortestPath
 

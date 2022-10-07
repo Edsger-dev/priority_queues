@@ -1,5 +1,4 @@
 import pandas as pd
-
 import pyarrow as pa
 import pyarrow.csv
 import pyarrow.parquet as pq

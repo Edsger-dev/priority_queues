@@ -6,21 +6,22 @@ https://askubuntu.com/questions/1052644/prevent-other-processes-for-performance
 sudo nice -n -20 /home/francois/miniconda3/envs/algo/bin/python perf_01.py -n USA
 """
 
-from argparse import ArgumentParser
 import os
+from argparse import ArgumentParser
 from time import perf_counter
 
 import graph_tool as gt
-from graph_tool import topology
-from igraph import Graph
 import networkit as nk
 import networkx as nx
 import numpy as np
 import pandas as pd
+from graph_tool import topology
+from igraph import Graph
 from scipy.sparse import coo_array, csr_matrix
 from scipy.sparse.csgraph import dijkstra
 
 from priority_queues.shortest_path import ShortestPath
+
 
 parser = ArgumentParser(description="Command line interface to perf_01.py")
 parser.add_argument(
@@ -43,6 +44,7 @@ parser.add_argument(
 )
 args = parser.parse_args()
 reg = args.network_name
+
 regions_usa = [
     "NY",
     "BAY",
