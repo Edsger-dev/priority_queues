@@ -14,7 +14,6 @@ from priority_queues.pq_bin_heap cimport (BinaryHeap,
                                           init_heap_para, min_heap_insert, 
                                           copy_keys_to_numpy_para)
 
-
 cpdef cnp.ndarray path_length_from(
     ssize_t[::1] csr_indices,
     ssize_t[::1] csr_indptr,
@@ -35,6 +34,7 @@ cpdef cnp.ndarray path_length_from(
         int num_threads = n_jobs
         ssize_t origin_vert = <ssize_t>origin_vert_in
 
+
     if num_threads < 1:
         num_threads = N_THREADS
 
@@ -42,24 +42,33 @@ cpdef cnp.ndarray path_length_from(
     # all nodes have INFINITY key and NOT_IN_HEAP state
     init_heap_para(&bheap, <ssize_t>vertex_count, num_threads)
 
-    # the key is set to zero for the origin vertex,
-    # which is inserted into the heap
-    min_heap_insert(&bheap, origin_vert, 0.0)
+    with nogil:
 
-    # main loop
-    while bheap.size > 0:
-        tail_vert_idx = extract_min(&bheap)
-        tail_vert_val = bheap.elements[tail_vert_idx].key
-        # loop on outgoing edges
-        for idx in range(csr_indptr[tail_vert_idx], csr_indptr[tail_vert_idx + 1]):
-            head_vert_idx = csr_indices[idx]
-            vert_state = bheap.elements[head_vert_idx].state
-            if vert_state != SCANNED:
-                head_vert_val = tail_vert_val + csr_data[idx]
-                if vert_state == NOT_IN_HEAP:
-                    min_heap_insert(&bheap, head_vert_idx, head_vert_val)
-                elif bheap.elements[head_vert_idx].key > head_vert_val:
-                    decrease_key_from_element_index(&bheap, head_vert_idx, head_vert_val)
+        # the key is set to zero for the origin vertex,
+        # which is inserted into the heap
+        min_heap_insert(&bheap, origin_vert, 0.0)
+
+        # main loop
+        while bheap.size > 0:
+            tail_vert_idx = extract_min(&bheap)
+            tail_vert_val = bheap.elements[tail_vert_idx].key
+            # loop on outgoing edges
+            for idx in range(csr_indptr[tail_vert_idx], csr_indptr[tail_vert_idx + 1]):
+                head_vert_idx = csr_indices[idx]
+                vert_state = bheap.elements[head_vert_idx].state
+                if vert_state != SCANNED:
+                    head_vert_val = tail_vert_val + csr_data[idx]
+                    if vert_state == NOT_IN_HEAP:
+                        min_heap_insert(&bheap, head_vert_idx, head_vert_val)
+                    elif bheap.elements[head_vert_idx].key > head_vert_val:
+                        decrease_key_from_element_index(&bheap, head_vert_idx, head_vert_val)
+                # if vert_state == NOT_IN_HEAP:
+                #     head_vert_val = tail_vert_val + csr_data[idx]
+                #     min_heap_insert(&bheap, head_vert_idx, head_vert_val)
+                # elif vert_state == IN_HEAP:
+                #     head_vert_val = tail_vert_val + csr_data[idx]
+                #     if bheap.elements[head_vert_idx].key > head_vert_val:
+                #         decrease_key_from_element_index(&bheap, head_vert_idx, head_vert_val)
 
     # copy the results into a numpy array
     path_lengths = copy_keys_to_numpy_para(&bheap, vertex_count, num_threads)

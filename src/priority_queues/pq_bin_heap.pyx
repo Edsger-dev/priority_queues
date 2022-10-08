@@ -69,6 +69,9 @@ cdef void init_heap_para(
         num_threads=num_threads):
         bheap.A[i] = length
         _initialize_element(bheap, i)
+        # bheap.elements[i].key = DTYPE_INF
+        # bheap.elements[i].state = NOT_IN_HEAP
+        # bheap.elements[i].node_idx = length
 
 
 cdef inline void _initialize_element(
@@ -296,6 +299,7 @@ cdef inline void _min_heapify(
         #     ):
         #         s = l
 
+
         s = i
         if (r < bheap.size):
             if (bheap.elements[bheap.A[r]].key < bheap.elements[bheap.A[s]].key):
@@ -308,6 +312,8 @@ cdef inline void _min_heapify(
                 (bheap.elements[bheap.A[l]].key < bheap.elements[bheap.A[s]].key)
             ):
                 s = l
+
+
 
         # if (
         #     (l < bheap.size) and 
