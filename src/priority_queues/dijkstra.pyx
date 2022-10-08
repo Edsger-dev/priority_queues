@@ -18,7 +18,7 @@ from priority_queues.pq_bin_heap cimport (BinaryHeap,
 cpdef cnp.ndarray path_length_from(
     ssize_t[::1] csr_indices,
     ssize_t[::1] csr_indptr,
-    DTYPE_t[::1] edge_weights,
+    DTYPE_t[::1] csr_data,
     int origin_vert_in,
     int vertex_count,
     int n_jobs=-1):
@@ -28,7 +28,7 @@ cpdef cnp.ndarray path_length_from(
     """
 
     cdef:
-        ssize_t tail_vert_idx, head_vert_idx, edge_idx  # vertex and edge indices
+        ssize_t tail_vert_idx, head_vert_idx, idx  # indices
         DTYPE_t tail_vert_val, head_vert_val  # vertex travel times
         BinaryHeap bheap  # binary heap
         int vert_state  # vertex state
@@ -51,11 +51,11 @@ cpdef cnp.ndarray path_length_from(
         tail_vert_idx = extract_min(&bheap)
         tail_vert_val = bheap.elements[tail_vert_idx].key
         # loop on outgoing edges
-        for edge_idx in range(csr_indptr[tail_vert_idx], csr_indptr[tail_vert_idx + 1]):
-            head_vert_idx = csr_indices[edge_idx]
+        for idx in range(csr_indptr[tail_vert_idx], csr_indptr[tail_vert_idx + 1]):
+            head_vert_idx = csr_indices[idx]
             vert_state = bheap.elements[head_vert_idx].state
             if vert_state != SCANNED:
-                head_vert_val = tail_vert_val + edge_weights[edge_idx]
+                head_vert_val = tail_vert_val + csr_data[idx]
                 if vert_state == NOT_IN_HEAP:
                     min_heap_insert(&bheap, head_vert_idx, head_vert_val)
                 elif bheap.elements[head_vert_idx].key > head_vert_val:
@@ -73,7 +73,7 @@ cpdef cnp.ndarray path_length_from(
 # cpdef cnp.ndarray path_length_from_nocopy(
 #     ssize_t[::1] csr_indices,
 #     ssize_t[::1] csr_indptr,
-#     DTYPE_t[::1] edge_weights,
+#     DTYPE_t[::1] csr_data,
 #     int origin_vert_in,
 #     int vertex_count,
 #     int n_jobs=-1):
@@ -83,7 +83,7 @@ cpdef cnp.ndarray path_length_from(
 #     """
 
 #     cdef:
-#         ssize_t tail_vert_idx, head_vert_idx, edge_idx  # vertex and edge indices
+#         ssize_t tail_vert_idx, head_vert_idx, idx  # vertex and edge indices
 #         DTYPE_t tail_vert_val, head_vert_val  # vertex travel times
 #         BinaryHeap bheap  # binary heap
 #         int vert_state  # vertex state
@@ -105,11 +105,11 @@ cpdef cnp.ndarray path_length_from(
 #         tail_vert_idx = extract_min(&bheap)
 #         tail_vert_val = bheap.keys[tail_vert_idx]
 #         # loop on outgoing edges
-#         for edge_idx in range(csr_indptr[tail_vert_idx], csr_indptr[tail_vert_idx + 1]):
-#             head_vert_idx = csr_indices[edge_idx]
+#         for idx in range(csr_indptr[tail_vert_idx], csr_indptr[tail_vert_idx + 1]):
+#             head_vert_idx = csr_indices[idx]
 #             vert_state = bheap.elements[head_vert_idx].state
 #             if vert_state != SCANNED:
-#                 head_vert_val = tail_vert_val + edge_weights[edge_idx]
+#                 head_vert_val = tail_vert_val + csr_data[idx]
 #                 if vert_state == NOT_IN_HEAP:
 #                     min_heap_insert(&bheap, head_vert_idx, head_vert_val)
 #                 elif bheap.keys[head_vert_idx] > head_vert_val:
