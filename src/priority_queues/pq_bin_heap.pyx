@@ -15,6 +15,9 @@ license : MIT
 cimport numpy as cnp
 from cython.parallel import prange
 
+
+# from libc.stdio cimport printf
+
 from libc.stdlib cimport free, malloc
 
 from priority_queues.commons cimport (DTYPE, DTYPE_INF, IN_HEAP, N_THREADS,
@@ -203,6 +206,8 @@ cdef ssize_t extract_min(BinaryHeap* bheap) nogil:
         ssize_t element_idx = bheap.A[0]  # min element index
         ssize_t node_idx = bheap.size - 1  # last leaf node index
 
+    # printf("%d\n", bheap.size)
+
     # exchange the root node with the last leaf node
     _exchange_nodes(bheap, 0, node_idx)
 
@@ -259,8 +264,8 @@ cdef inline void _min_heapify(
 
     while True:
 
-        l =  2 * i + 1  
-        # l = (i << 1) + 1
+        # l =  2 * i + 1  
+        l = (i << 1) + 1
         r = l + 1
         
         # key_i = bheap.elements[bheap.A[i]].key
@@ -359,8 +364,8 @@ cdef inline void _decrease_key_from_node_index(
 
     bheap.elements[bheap.A[i]].key = key_new
     while i > 0: 
-        j = (i - 1) // 2  
-        # j = (i - 1) >> 1
+        # j = (i - 1) // 2  
+        j = (i - 1) >> 1
         key_j = bheap.elements[bheap.A[j]].key
         if key_j > key_new:
             _exchange_nodes(bheap, i, j)
