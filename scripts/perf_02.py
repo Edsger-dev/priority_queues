@@ -42,8 +42,19 @@ parser.add_argument(
     type=str,
     required=True,
 )
+parser.add_argument(
+    "-f",
+    "--from",
+    dest="idx_from",
+    help="source vertex index",
+    metavar="INT",
+    type=int,
+    required=False,
+    default=1000,
+)
 args = parser.parse_args()
 reg = args.network_name
+idx_from = args.idx_from
 
 regions_usa = [
     "NY",
@@ -81,8 +92,6 @@ else:
     network_file_path = f"/home/francois/Data/Disk_1/OSMR/{reg}/{reg}.gr.parquet"
 
 
-IDX_FROM = 1000
-
 edges_df = pd.read_parquet(network_file_path)
 edges_df.rename(
     columns={"id_from": "source", "id_to": "target", "tt": "weight"}, inplace=True
@@ -110,7 +119,7 @@ if lib == "SP":
     start = perf_counter()
 
     dist_matrix = dijkstra(
-        csgraph=graph_csr, directed=True, indices=IDX_FROM, return_predecessors=False
+        csgraph=graph_csr, directed=True, indices=idx_from, return_predecessors=False
     )
 
     end = perf_counter()
@@ -131,7 +140,7 @@ elif lib == "PQ":
     print(f"PQ Prepare the data - Elapsed time: {elapsed_time:6.2f} s")
 
     start = perf_counter()
-    dist_matrix = sp.run(vertex_idx=IDX_FROM, return_inf=True, return_Series=False)
+    dist_matrix = sp.run(vertex_idx=idx_from, return_inf=True, return_Series=False)
     end = perf_counter()
     elapsed_time = end - start
     print(f"PQ Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
@@ -153,7 +162,7 @@ elif lib == "IG":
 
     start = perf_counter()
 
-    distances = g.distances(source=IDX_FROM, target=None, weights="weight", mode="out")
+    distances = g.distances(source=idx_from, target=None, weights="weight", mode="out")
     dist_matrix = np.asarray(distances[0])
 
     end = perf_counter()
@@ -189,7 +198,7 @@ elif lib == "GT":
     start = perf_counter()
     dist = topology.shortest_distance(
         g,
-        source=g.vertex(IDX_FROM),
+        source=g.vertex(idx_from),
         weights=g.ep.t,
         negative_weights=False,
         directed=True,
@@ -228,7 +237,7 @@ elif lib == "NK":
         nk.graphio.writeGraph(g, networkit_file_path, nk_file_format)
 
     dijkstra = nk.distance.Dijkstra(
-        g, IDX_FROM, storePaths=False, storeNodesSortedByDistance=False
+        g, idx_from, storePaths=False, storeNodesSortedByDistance=False
     )
 
     end = perf_counter()
@@ -267,7 +276,7 @@ elif lib == "NX":
     start = perf_counter()
 
     distance_dict = nx.single_source_dijkstra_path_length(
-        G=graph, source=IDX_FROM, weight="weight"
+        G=graph, source=idx_from, weight="weight"
     )
     dist_matrix = np.inf * np.ones(vertex_count, dtype=np.float64)
     dist_matrix[list(distance_dict.keys())] = list(distance_dict.values())
