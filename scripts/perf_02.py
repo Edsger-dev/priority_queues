@@ -253,7 +253,8 @@ elif lib == "NK":
 
         edges_df = pd.read_parquet(network_file_path)
         edges_df.rename(
-            columns={"id_from": "source", "id_to": "target", "tt": "weight"}, inplace=True
+            columns={"id_from": "source", "id_to": "target", "tt": "weight"},
+            inplace=True,
         )
         vertex_count = edges_df[["source", "target"]].max().max() + 1
         print(f"{len(edges_df)} edges and {vertex_count} vertices")
