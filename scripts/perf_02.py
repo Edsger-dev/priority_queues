@@ -10,13 +10,8 @@ import os
 from argparse import ArgumentParser
 from time import perf_counter
 
-import graph_tool as gt
-import networkit as nk
-import networkx as nx
 import numpy as np
 import pandas as pd
-from graph_tool import topology
-from igraph import Graph
 from scipy.sparse import coo_array, csr_matrix
 from scipy.sparse.csgraph import dijkstra
 
@@ -92,17 +87,19 @@ else:
     network_file_path = f"/home/francois/Data/Disk_1/OSMR/{reg}/{reg}.gr.parquet"
 
 
-edges_df = pd.read_parquet(network_file_path)
-edges_df.rename(
-    columns={"id_from": "source", "id_to": "target", "tt": "weight"}, inplace=True
-)
-vertex_count = edges_df[["source", "target"]].max().max() + 1
-print(f"{len(edges_df)} edges and {vertex_count} vertices")
+
 
 if lib == "SP":
 
     # SciPy
     # =====
+
+    edges_df = pd.read_parquet(network_file_path)
+    edges_df.rename(
+        columns={"id_from": "source", "id_to": "target", "tt": "weight"}, inplace=True
+    )
+    vertex_count = edges_df[["source", "target"]].max().max() + 1
+    print(f"{len(edges_df)} edges and {vertex_count} vertices")
 
     start = perf_counter()
 
@@ -131,6 +128,13 @@ elif lib == "PQ":
     # priority_queues
     # ===============
 
+    edges_df = pd.read_parquet(network_file_path)
+    edges_df.rename(
+        columns={"id_from": "source", "id_to": "target", "tt": "weight"}, inplace=True
+    )
+    vertex_count = edges_df[["source", "target"]].max().max() + 1
+    print(f"{len(edges_df)} edges and {vertex_count} vertices")
+
     start = perf_counter()
     sp = ShortestPath(
         edges_df, orientation="one-to-all", check_edges=False, permute=False
@@ -148,11 +152,19 @@ elif lib == "PQ":
     # time_df = sp.get_timings()
     # print(time_df)
 
-
 elif lib == "IG":
 
     # iGraph
     # ======
+
+    from igraph import Graph
+
+    edges_df = pd.read_parquet(network_file_path)
+    edges_df.rename(
+        columns={"id_from": "source", "id_to": "target", "tt": "weight"}, inplace=True
+    )
+    vertex_count = edges_df[["source", "target"]].max().max() + 1
+    print(f"{len(edges_df)} edges and {vertex_count} vertices")
 
     start = perf_counter()
     g = Graph.DataFrame(edges_df, directed=True)
@@ -174,6 +186,16 @@ elif lib == "GT":
 
     # Graph-tools
     # ===========
+
+    import graph_tool as gt
+    from graph_tool import topology
+
+    edges_df = pd.read_parquet(network_file_path)
+    edges_df.rename(
+        columns={"id_from": "source", "id_to": "target", "tt": "weight"}, inplace=True
+    )
+    vertex_count = edges_df[["source", "target"]].max().max() + 1
+    print(f"{len(edges_df)} edges and {vertex_count} vertices")
 
     start = perf_counter()
 
@@ -213,6 +235,8 @@ elif lib == "NK":
     # NetworkKit
     # ==========
 
+    import networkit as nk
+
     start = perf_counter()
 
     nk_file_format = nk.graphio.Format.NetworkitBinary
@@ -228,6 +252,13 @@ elif lib == "NK":
         g = nk.graphio.readGraph(networkit_file_path, nk_file_format)
 
     else:
+
+        edges_df = pd.read_parquet(network_file_path)
+        edges_df.rename(
+            columns={"id_from": "source", "id_to": "target", "tt": "weight"}, inplace=True
+        )
+        vertex_count = edges_df[["source", "target"]].max().max() + 1
+        print(f"{len(edges_df)} edges and {vertex_count} vertices")
 
         g = nk.Graph(n=vertex_count, weighted=True, directed=True, edgesIndexed=False)
 
@@ -257,6 +288,18 @@ elif lib == "NK":
 
 elif lib == "NX":
 
+    # NetworkX
+    # ========
+
+    import networkx as nx
+
+    edges_df = pd.read_parquet(network_file_path)
+    edges_df.rename(
+        columns={"id_from": "source", "id_to": "target", "tt": "weight"}, inplace=True
+    )
+    vertex_count = edges_df[["source", "target"]].max().max() + 1
+    print(f"{len(edges_df)} edges and {vertex_count} vertices")
+
     start = perf_counter()
 
     graph = nx.from_pandas_edgelist(
@@ -267,11 +310,11 @@ elif lib == "NX":
         create_using=nx.DiGraph,
     )
 
-    # print(graph.edges(data=True))
-
     end = perf_counter()
     elapsed_time = end - start
     print(f"nx load graph - Elapsed time: {elapsed_time:6.2f} s")
+
+    assert graph.edges(data=True)
 
     start = perf_counter()
 
