@@ -12,10 +12,10 @@ from time import perf_counter
 
 import numpy as np
 import pandas as pd
-from scipy.sparse import coo_array, csr_matrix
+from scipy.sparse import coo_array
 from scipy.sparse.csgraph import dijkstra
 
-from priority_queues.shortest_path import ShortestPath
+from priority_queues.shortest_path import ShortestPath, convert_sorted_graph_to_csr
 
 
 parser = ArgumentParser(description="Command line interface to perf_01.py")
@@ -32,7 +32,7 @@ parser.add_argument(
     "-l",
     "--library",
     dest="library_name",
-    help='library name, must be "SP" (SciPy), "PQ" (priority_queues), "IG" (iGraph), "GT" (graph-tools), "NK" (NetworkKit), "NX" (NetworkX)',
+    help='library name, must be "SP" (SciPy), "PQ" (priority_queues), "IG" (iGraph), "GT" (graph-tools), "NK" (NetworkKit), "NX" (NetworkX), "SK" (scikit network)',
     metavar="TXT",
     type=str,
     required=True,
@@ -51,6 +51,8 @@ args = parser.parse_args()
 reg = args.network_name
 idx_from = args.idx_from
 
+
+# network name check
 regions_usa = [
     "NY",
     "BAY",
@@ -75,20 +77,16 @@ if reg in regions_usa:
 else:
     continent = "eur"
 
-
+# lib name check
 lib = args.library_name.upper()
-assert lib in ["SP", "PQ", "IG", "GT", "NK", "NX"]
-
-# load the edges as a dataframe
+assert lib in ["SP", "PQ", "IG", "GT", "NK", "NX", "SK"]
 
 if continent == "usa":
     network_file_path = f"/home/francois/Data/Disk_1/DIMACS_road_networks/{reg}/USA-road-t.{reg}.gr.parquet"
 else:
     network_file_path = f"/home/francois/Data/Disk_1/OSMR/{reg}/{reg}.gr.parquet"
 
-
-
-
+# shortest path
 if lib == "SP":
 
     # SciPy
@@ -327,3 +325,38 @@ elif lib == "NX":
     end = perf_counter()
     elapsed_time = end - start
     print(f"nx Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
+
+elif lib == "SK":
+
+    # scikit-network
+    # ==============
+
+    from sknetwork.path import get_distances
+
+    edges_df = pd.read_parquet(network_file_path)
+    edges_df.rename(
+        columns={"id_from": "source", "id_to": "target", "tt": "weight"}, inplace=True
+    )
+    vertex_count = edges_df[["source", "target"]].max().max() + 1
+    print(f"{len(edges_df)} edges and {vertex_count} vertices")
+
+    start = perf_counter()
+    graph_csr = convert_sorted_graph_to_csr(
+        edges_df, "source", "target", "weight", vertex_count
+    )
+    end = perf_counter()
+    elapsed_time = end - start
+    print(f"SKN Prepare the data - Elapsed time: {elapsed_time:6.2f} s")
+
+    start = perf_counter()
+    dist_matrix_ref = get_distances(
+        adjacency=graph_csr,
+        sources=idx_from,
+        method="D",
+        return_predecessors=False,
+        unweighted=False,
+        n_jobs=-1,
+    )
+    end = perf_counter()
+    elapsed_time = end - start
+    print(f"SKN Dijkstra - Elapsed time: {elapsed_time:6.2f} s")
