@@ -22,6 +22,8 @@ from scipy.sparse.csgraph import dijkstra
 
 from priority_queues.shortest_path import ShortestPath
 
+DATA_DIR = "/home/francois/Data/Disk_1/"
+
 
 parser = ArgumentParser(description="Command line interface to perf_01.py")
 parser.add_argument(
@@ -47,6 +49,7 @@ args = parser.parse_args()
 reg = args.network_name
 idx_from = args.idx_from
 
+# network name check
 regions_usa = [
     "NY",
     "BAY",
@@ -74,9 +77,11 @@ else:
 # load the edges as a dataframe
 
 if continent == "usa":
-    network_file_path = f"/home/francois/Data/Disk_1/DIMACS_road_networks/{reg}/USA-road-t.{reg}.gr.parquet"
+    network_file_path = os.path.join(
+        DATA_DIR, f"DIMACS_road_networks/{reg}/USA-road-t.{reg}.gr.parquet"
+    )
 else:
-    network_file_path = f"/home/francois/Data/Disk_1/OSMR/{reg}/{reg}.gr.parquet"
+    network_file_path = os.path.join(DATA_DIR, f"OSMR/{reg}/{reg}.gr.parquet")
 
 edges_df = pd.read_parquet(network_file_path)
 vertex_count = edges_df[["source", "target"]].max().max() + 1
@@ -207,11 +212,11 @@ start = perf_counter()
 
 nk_file_format = nk.graphio.Format.NetworkitBinary
 if continent == "usa":
-    networkit_file_path = f"/home/francois/Data/Disk_1/DIMACS_road_networks/{reg}/USA-road-t.{reg}.gr.NetworkitBinary"
-else:
-    networkit_file_path = (
-        f"/home/francois/Data/Disk_1/OSMR/{reg}/{reg}.gr.NetworkitBinary"
+    networkit_file_path = os.path.join(
+        DATA_DIR, f"DIMACS_road_networks/{reg}/USA-road-t.{reg}.gr.NetworkitBinary"
     )
+else:
+    networkit_file_path = os.path.join(DATA_DIR, f"OSMR/{reg}/{reg}.gr.NetworkitBinary")
 
 if os.path.exists(networkit_file_path):
 
