@@ -20,7 +20,7 @@ from priority_queues.shortest_path import ShortestPath, convert_sorted_graph_to_
 DATA_DIR = "/home/francois/Data/Disk_1/"
 
 
-parser = ArgumentParser(description="Command line interface to perf_01.py")
+parser = ArgumentParser(description="Command line interface to perf_02.py")
 parser.add_argument(
     "-n",
     "--network",
