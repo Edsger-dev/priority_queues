@@ -93,4 +93,3 @@ if choice == "CSR_1":
 
     # full Cython with memory views
     csr_1(edges_df, vertex_count, edge_count)
-
