@@ -1,3 +1,4 @@
+import gc
 import os
 from argparse import ArgumentParser
 from time import perf_counter
@@ -6,7 +7,7 @@ import numpy as np
 import pandas as pd
 from scipy.sparse import coo_array
 
-from graph import loop_CSR, loop_FSV
+from graph import loop_CSR_1, loop_CSR_2, loop_AL
 from priority_queues.shortest_path import convert_sorted_graph_to_csr
 
 DATA_DIR = "/home/francois/Data/Disk_1/"
@@ -62,9 +63,12 @@ edges_df.rename(
     columns={"id_from": "source", "id_to": "target", "tt": "weight"}, inplace=True
 )
 vertex_count = edges_df[["source", "target"]].max().max() + 1
-print(f"{len(edges_df)} edges and {vertex_count} vertices")
+edge_count = len(edges_df)
+print(f"{edge_count} edges and {vertex_count} vertices")
 
-# CSR
+# CSR_1
+# =====
+
 start = perf_counter()
 
 data = edges_df["weight"].values
@@ -73,12 +77,19 @@ col = edges_df["target"].values
 graph_coo = coo_array((data, (row, col)), shape=(vertex_count, vertex_count))
 graph_csr = graph_coo.tocsr()
 
+
 end = perf_counter()
 elapsed_time = end - start
-print(f"convert to CSR - Elapsed time: {elapsed_time:6.2f} s")
+print(f"convert to CSR - Elapsed time: {elapsed_time:12.8f} s")
+
+# cleanup
+del edges_df, data, row, col, graph_coo
+gc.collect()
+gc.collect()
+
 
 start = perf_counter()
-loop_CSR(
+loop_CSR_1(
     graph_csr.indptr.astype(np.intp),
     graph_csr.indices.astype(np.intp),
     graph_csr.data,
@@ -86,11 +97,27 @@ loop_CSR(
 )
 end = perf_counter()
 elapsed_time = end - start
-print(f"CSR loop - Elapsed time: {elapsed_time:6.2f} s")
+print(f"loop_CSR_1 - Elapsed time: {elapsed_time:12.8f} s")
 
-# adjacency vectors
+# CSR_2
+# =====
 start = perf_counter()
-loop_FSV(
+loop_CSR_2(
+    graph_csr.indptr.astype(np.intp),
+    graph_csr.indices.astype(np.intp),
+    graph_csr.data,
+    vertex_count,
+    edge_count,
+)
+end = perf_counter()
+elapsed_time = end - start
+print(f"loop_CSR_2 - Elapsed time: {elapsed_time:12.8f} s")
+
+# adjacency list
+# ==============
+
+start = perf_counter()
+loop_AL(
     graph_csr.indptr.astype(np.intp),
     graph_csr.indices.astype(np.intp),
     graph_csr.data,
@@ -98,4 +125,4 @@ loop_FSV(
 )
 end = perf_counter()
 elapsed_time = end - start
-print(f"FSV whole process - Elapsed time: {elapsed_time:6.2f} s")
+print(f"AL whole process - Elapsed time: {elapsed_time:12.8f} s")
