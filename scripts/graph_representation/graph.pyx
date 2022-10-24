@@ -3,6 +3,7 @@
 
 from time import perf_counter
 
+import numpy as np
 cimport numpy as cnp
 from cython.parallel import prange
 from libc.stdlib cimport free, malloc
@@ -11,6 +12,7 @@ import psutil
 
 # forward star 1
 # ==============
+
 
 cpdef void loop_CSR_1(
     ssize_t[::1] csr_indptr,
@@ -30,12 +32,84 @@ cpdef void loop_CSR_1(
     with nogil:
 
         for tail_vert_idx in range(<ssize_t>vertex_count):
-        # for tail_vert_idx in range(10):
-            # print(f"- {tail_vert_idx}")
             for ptr in range(csr_indptr[tail_vert_idx], csr_indptr[tail_vert_idx + 1]):
                 head_vert_idx = csr_indices[ptr]
                 edge_weight = csr_data[ptr]
-                # print(f"{head_vert_idx} : {edge_weight}")          
+
+    # for tail_vert_idx in range(100):
+    #     for ptr in range(csr_indptr[tail_vert_idx], csr_indptr[tail_vert_idx + 1]):
+    #         head_vert_idx = csr_indices[ptr]
+    #         edge_weight = csr_data[ptr]
+    #         print(f"tail : {tail_vert_idx:10d}, head {head_vert_idx:10d}, weight : {edge_weight:16.4}")
+
+cpdef csr_1(edges_df, vertex_count, edge_count):
+    """Loop over all vertex outgoing edges using the forward star representation with:
+    - a pointer (csr_indptr)
+    - a vector storing the head vertex indices (csr_indices)
+    - a vector storing the weight (csr_data)
+    """
+
+    csr_indptr = np.zeros(vertex_count + 1, dtype=np.uint32)
+    csr_indices = np.zeros(edge_count, dtype=np.uint32)
+    csr_data = np.zeros(edge_count, dtype=np.float64)
+
+    # convert to CSR
+
+    start = perf_counter()
+
+    edges_df.sort_values(by="source", axis=0, ascending=True, inplace=True)
+
+    cdef:
+
+        cnp.uint32_t[::1] tail_view  = edges_df["source"].values
+        cnp.uint32_t[::1] head_view = edges_df["target"].values
+        cnp.float64_t[::1] data_view = edges_df["weight"].values
+
+        cnp.uint32_t[::1] csr_indptr_view  = csr_indptr
+        cnp.uint32_t[::1] csr_indices_view = csr_indices
+        cnp.float64_t[::1] csr_data_view = csr_data
+
+        ssize_t i, edge_count_ssize_t = <ssize_t> edge_count
+        ssize_t vertex_count_ssize_t = <ssize_t> vertex_count
+        ssize_t ptr_ssize_t
+        cnp.uint32_t ptr, head_vert_idx
+        cnp.float64_t edge_weight
+
+
+    with nogil:
+
+        for i in range(edge_count_ssize_t):
+            csr_indptr_view[<ssize_t>(tail_view[i] + 1)] += 1
+            csr_indices_view[i] = head_view[i]
+            csr_data_view[i] = data_view[i]
+
+        for i in range(vertex_count_ssize_t):
+            csr_indptr_view[i + 1] += csr_indptr_view[i]
+
+    end = perf_counter()
+    elapsed_time = end - start
+    print(f"convert to CSR - Elapsed time: {elapsed_time:12.8f} s")
+
+    start = perf_counter()
+
+    with nogil:
+
+        for i in range(vertex_count_ssize_t):
+            for ptr in range(csr_indptr_view[i], csr_indptr_view[i + 1]):
+                ptr_ssize_t = <ssize_t>ptr
+                head_vert_idx = csr_indices_view[ptr_ssize_t]
+                edge_weight = csr_data_view[ptr_ssize_t]
+
+    # for i in range(<ssize_t>100):
+    #     for ptr in range(csr_indptr_view[i], csr_indptr_view[i + 1]):
+    #         ptr_ssize_t = <ssize_t>ptr
+    #         head_vert_idx = csr_indices_view[ptr_ssize_t]
+    #         edge_weight = csr_data_view[ptr_ssize_t]
+    #         print(f"tail : {i:10d}, head {head_vert_idx:10d}, weight : {edge_weight:16.4}")
+
+    end = perf_counter()
+    elapsed_time = end - start
+    print(f"CSR_2 loop - Elapsed time: {elapsed_time:12.8f} s")
 
 
 # forward star 2
