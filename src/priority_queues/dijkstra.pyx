@@ -4,6 +4,8 @@ from cython.parallel import prange
 
 cimport numpy as cnp
 
+# from libc.stdio cimport printf
+
 import numpy as np
 
 from priority_queues.commons cimport (DTYPE, N_THREADS, NOT_IN_HEAP, SCANNED,
@@ -51,7 +53,9 @@ cpdef cnp.ndarray path_length_from(
         # main loop
         while bheap.size > 0:
             tail_vert_idx = extract_min(&bheap)
+            # printf("%d\n", tail_vert_idx)
             tail_vert_val = bheap.elements[tail_vert_idx].key
+
             # loop on outgoing edges
             for idx in range(csr_indptr[tail_vert_idx], csr_indptr[tail_vert_idx + 1]):
                 head_vert_idx = csr_indices[idx]

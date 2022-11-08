@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from scipy.sparse import coo_array
 
-from graph import csr_1, loop_CSR_1
+from graph import loop_CSR_1, loop_CSR_2
 from priority_queues.shortest_path import convert_sorted_graph_to_csr
 
 DATA_DIR = "/home/francois/Data/Disk_1/"
@@ -68,28 +68,43 @@ print(f"{edge_count} edges and {vertex_count} vertices")
 
 edges_df[["source", "target"]] = edges_df[["source", "target"]].astype(np.uint32)
 
-choice = "CSR_1"
+choice = "CSR_2"
 if choice == "CSR_1":
 
     # CSR_1
     # =====
 
-    # data = edges_df["weight"].values
-    # row = edges_df["source"].values
-    # col = edges_df["target"].values
-    # graph_coo = coo_array((data, (row, col)), shape=(vertex_count, vertex_count))
-    # graph_csr = graph_coo.tocsr()
+    start = perf_counter()
 
-    # start = perf_counter()
-    # loop_CSR_1(
-    #     graph_csr.indptr.astype(np.intp),
-    #     graph_csr.indices.astype(np.intp),
-    #     graph_csr.data,
-    #     vertex_count,
-    # )
-    # end = perf_counter()
-    # elapsed_time = end - start
-    # print(f"loop_CSR_1 - Elapsed time: {elapsed_time:12.8f} s")
+    data = edges_df["weight"].values
+    row = edges_df["source"].values
+    col = edges_df["target"].values
+    graph_coo = coo_array((data, (row, col)), shape=(vertex_count, vertex_count))
+    graph_csr = graph_coo.tocsr()
 
-    # full Cython with memory views
-    csr_1(edges_df, vertex_count, edge_count)
+    end = perf_counter()
+    elapsed_time = end - start
+    print(f"SciPy convert to CSR - Elapsed time: {elapsed_time:12.8f} s")
+
+    start = perf_counter()
+    loop_CSR_1(
+        graph_csr.indptr.astype(np.intp),
+        graph_csr.indices.astype(np.intp),
+        graph_csr.data,
+        vertex_count,
+    )
+    end = perf_counter()
+    elapsed_time = end - start
+    print(f"loop_CSR_1 - Elapsed time: {elapsed_time:12.8f} s")
+
+elif choice == "CSR_2":
+
+    start = perf_counter()
+    loop_CSR_2(
+        edges_df, vertex_count, edge_count
+    )
+    end = perf_counter()
+    elapsed_time = end - start
+    print(f"loop_CSR_2 - Elapsed time: {elapsed_time:12.8f} s")
+
+
