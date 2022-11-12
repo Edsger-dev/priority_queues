@@ -410,7 +410,7 @@ cdef cnp.ndarray copy_keys_to_numpy_para(
 
 cdef cnp.ndarray copy_keys_to_numpy(
     BinaryHeap* bheap,
-    int vertex_count
+    ssize_t vertex_count
 ):
     """Copy the keys into a numpy array.
 
@@ -428,7 +428,7 @@ cdef cnp.ndarray copy_keys_to_numpy(
     path_lengths = cnp.ndarray(vertex_count, dtype=DTYPE)
 
     cdef:
-        int i  # loop counter
+        ssize_t i  # loop counter
         DTYPE_t[::1] path_lengths_view = path_lengths
 
     with nogil:

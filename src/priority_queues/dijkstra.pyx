@@ -13,7 +13,9 @@ from priority_queues.commons cimport (DTYPE, N_THREADS, NOT_IN_HEAP, SCANNED,
 from priority_queues.pq_bin_heap cimport (BinaryHeap,
                                           decrease_key_from_element_index,
                                           extract_min, free_heap,
-                                          init_heap_para, min_heap_insert, 
+                                          init_heap,
+                                          # init_heap_para, 
+                                          min_heap_insert, 
                                           copy_keys_to_numpy,
                                           #copy_keys_to_numpy_para
                                           )
@@ -44,7 +46,8 @@ cpdef cnp.ndarray path_length_from(
 
     # initialization of the heap elements 
     # all nodes have INFINITY key and NOT_IN_HEAP state
-    init_heap_para(&bheap, <ssize_t>vertex_count, num_threads)
+    init_heap(&bheap, <ssize_t>vertex_count)
+    # init_heap_para(&bheap, <ssize_t>vertex_count, num_threads)
 
     with nogil:
 
@@ -78,7 +81,7 @@ cpdef cnp.ndarray path_length_from(
 
     # copy the results into a numpy array
     # path_lengths = copy_keys_to_numpy_para(&bheap, vertex_count, num_threads)
-    path_lengths = copy_keys_to_numpy(&bheap, vertex_count)
+    path_lengths = copy_keys_to_numpy(&bheap, <ssize_t>vertex_count)
 
     # cleanup
     free_heap(&bheap)  
