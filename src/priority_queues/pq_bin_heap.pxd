@@ -23,4 +23,5 @@ cdef DTYPE_t peek(BinaryHeap*) nogil
 cdef ssize_t extract_min(BinaryHeap*) nogil
 cdef bint is_empty(BinaryHeap*) nogil
 cdef void decrease_key_from_element_index(BinaryHeap*, ssize_t, DTYPE_t) nogil
+cdef cnp.ndarray copy_keys_to_numpy(BinaryHeap*, int)
 cdef cnp.ndarray copy_keys_to_numpy_para(BinaryHeap*, int, int)

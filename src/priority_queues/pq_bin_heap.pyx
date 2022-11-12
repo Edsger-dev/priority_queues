@@ -406,3 +406,34 @@ cdef cnp.ndarray copy_keys_to_numpy_para(
         path_lengths_view[i] = bheap.elements[i].key
 
     return path_lengths
+
+
+cdef cnp.ndarray copy_keys_to_numpy(
+    BinaryHeap* bheap,
+    int vertex_count
+):
+    """Copy the keys into a numpy array.
+
+    input
+    =====
+    * BinaryHeap* bheap : binary heap
+    * int vertex_count : vertex count
+    * int num_threads : number of threads for the parallel job
+
+    output
+    ======
+    * cnp.ndarray : NumPy array with all the keys
+    """
+
+    path_lengths = cnp.ndarray(vertex_count, dtype=DTYPE)
+
+    cdef:
+        int i  # loop counter
+        DTYPE_t[::1] path_lengths_view = path_lengths
+
+    with nogil:
+
+        for i in range(vertex_count):
+            path_lengths_view[i] = bheap.elements[i].key
+
+    return path_lengths

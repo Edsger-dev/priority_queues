@@ -14,7 +14,9 @@ from priority_queues.pq_bin_heap cimport (BinaryHeap,
                                           decrease_key_from_element_index,
                                           extract_min, free_heap,
                                           init_heap_para, min_heap_insert, 
-                                          copy_keys_to_numpy_para)
+                                          copy_keys_to_numpy,
+                                          #copy_keys_to_numpy_para
+                                          )
 
 cpdef cnp.ndarray path_length_from(
     ssize_t[::1] csr_indices,
@@ -75,7 +77,8 @@ cpdef cnp.ndarray path_length_from(
                 #         decrease_key_from_element_index(&bheap, head_vert_idx, head_vert_val)
 
     # copy the results into a numpy array
-    path_lengths = copy_keys_to_numpy_para(&bheap, vertex_count, num_threads)
+    # path_lengths = copy_keys_to_numpy_para(&bheap, vertex_count, num_threads)
+    path_lengths = copy_keys_to_numpy(&bheap, vertex_count)
 
     # cleanup
     free_heap(&bheap)  
