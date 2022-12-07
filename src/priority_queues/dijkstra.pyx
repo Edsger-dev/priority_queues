@@ -20,7 +20,7 @@ from priority_queues.pq_bin_heap cimport (BinaryHeap,
                                           #copy_keys_to_numpy_para
                                           )
 
-cpdef cnp.ndarray path_length_from(
+cpdef cnp.ndarray path_length_from_bin(
     ssize_t[::1] csr_indices,
     ssize_t[::1] csr_indptr,
     DTYPE_t[::1] csr_data,

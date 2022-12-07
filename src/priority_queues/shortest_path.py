@@ -4,7 +4,7 @@ from scipy.sparse import coo_array, csc_matrix, csr_matrix
 # from scipy.sparse.csgraph import reverse_cuthill_mckee
 
 from priority_queues.commons import DTYPE_INF_PY, DTYPE_PY, Timer
-from priority_queues.dijkstra import path_length_from
+from priority_queues.dijkstra import path_length_from_bin
 
 
 def convert_sorted_graph_to_csr(edges_df, source, target, weight, vertex_count):
@@ -252,7 +252,7 @@ class ShortestPath:
         t = Timer()
         t.start()
         if self._orientation == "one-to-all":
-            path_length_values = path_length_from(
+            path_length_values = path_length_from_bin(
                 self._indices,
                 self._indptr,
                 self._edge_weights,
