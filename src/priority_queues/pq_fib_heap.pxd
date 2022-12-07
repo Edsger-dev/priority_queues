@@ -1,8 +1,9 @@
 
 cimport numpy as cnp
-ctypedef cnp.float64_t DTYPE_t
+
 ctypedef cnp.int64_t ITYPE_t
 
+from priority_queues.commons cimport DTYPE_t
 
 #cdef enum FibonacciState:
 #    SCANNED=1
@@ -25,3 +26,6 @@ ctypedef FibonacciNode* pFibonacciNode
 cdef struct FibonacciHeap:
     FibonacciNode* min_node
     pFibonacciNode[100] roots_by_rank  # maximum number of nodes is ~2^100.
+
+
+cdef void initialize_node(FibonacciNode*, unsigned int, double) nogil

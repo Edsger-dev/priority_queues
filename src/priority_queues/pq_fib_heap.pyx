@@ -10,6 +10,8 @@
 
 cimport cython
 
+from priority_queues.commons cimport ( 
+    DTYPE, DTYPE_INF)
 
 ######################################################################
 # FibonacciNode structure
@@ -18,7 +20,7 @@ cimport cython
 
 cdef void initialize_node(FibonacciNode* node,
                           unsigned int index,
-                          double val=0) nogil:
+                          double val) nogil:
     # Assumptions: - node is a valid pointer
     #              - node is not currently part of a heap
     node.index = index

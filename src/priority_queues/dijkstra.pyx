@@ -7,7 +7,7 @@ from libc.stdlib cimport free, malloc
 import numpy as np
 
 from priority_queues.commons cimport (
-    DTYPE, N_THREADS, NOT_IN_HEAP, SCANNED, DTYPE_t)
+    DTYPE, DTYPE_INF, NOT_IN_HEAP, SCANNED, DTYPE_t)
 
 from priority_queues.pq_bin_heap cimport (
     BinaryHeap,
@@ -19,7 +19,8 @@ from priority_queues.pq_bin_heap cimport (
 
 from priority_queues.pq_fib_heap cimport (
     FibonacciNode,
-    FibonacciHeap)
+    FibonacciHeap,
+    initialize_node)
 
 
 cpdef cnp.ndarray path_length_from_bin(
@@ -91,10 +92,18 @@ cpdef cnp.ndarray path_length_from_fib(
     """
 
     cdef:
+        ssize_t i
         FibonacciHeap heap
         FibonacciNode *v
         FibonacciNode *current_node
         FibonacciNode *nodes = <FibonacciNode*> malloc(vertex_count * sizeof(FibonacciNode))
+
+    # initialization of the heap elements 
+    # all nodes have INFINITY key and NOT_IN_HEAP state
+    for i in range(<ssize_t>vertex_count):
+        initialize_node(&nodes[i], i, DTYPE_INF)
+
+
 
 
     path_lengths = cnp.ndarray(vertex_count, dtype=DTYPE)
