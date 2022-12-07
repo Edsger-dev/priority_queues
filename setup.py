@@ -42,18 +42,18 @@ extensions = [
         ["src/priority_queues/pq_bin_heap.pyx"],
         extra_compile_args=extra_compile_args,
     ),
+    # Extension(
+    #     "priority_queues.pq_bin_heap_tests",
+    #     ["src/priority_queues/pq_bin_heap_tests.pyx"],
+    # ),
     Extension(
-        "priority_queues.pq_bin_heap_tests",
-        ["src/priority_queues/pq_bin_heap_tests.pyx"],
+        "priority_queues.pq_fib_heap",
+        ["src/priority_queues/pq_fib_heap.pyx"],
+        extra_compile_args=extra_compile_args,
     ),
     Extension(
         "priority_queues.dijkstra",
         ["src/priority_queues/dijkstra.pyx"],
-        extra_compile_args=extra_compile_args,
-    ),
-    Extension(
-        "priority_queues.pq_fib_heap",
-        ["src/priority_queues/pq_fib_heap.pyx"],
         extra_compile_args=extra_compile_args,
     ),
 ]
