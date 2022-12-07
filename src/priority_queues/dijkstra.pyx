@@ -3,11 +3,12 @@
 cimport numpy as cnp
 
 # from libc.stdio cimport printf
-
+from libc.stdlib cimport free, malloc
 import numpy as np
 
 from priority_queues.commons cimport (
     DTYPE, N_THREADS, NOT_IN_HEAP, SCANNED, DTYPE_t)
+
 from priority_queues.pq_bin_heap cimport (
     BinaryHeap,
     decrease_key_from_element_index,
@@ -15,6 +16,10 @@ from priority_queues.pq_bin_heap cimport (
     init_heap,
     min_heap_insert, 
     copy_keys_to_numpy)
+
+from priority_queues.pq_fib_heap cimport (
+    FibonacciNode,
+    FibonacciHeap)
 
 
 cpdef cnp.ndarray path_length_from_bin(
@@ -69,5 +74,30 @@ cpdef cnp.ndarray path_length_from_bin(
 
     # cleanup
     free_heap(&bheap)  
+
+    return path_lengths
+
+
+cpdef cnp.ndarray path_length_from_fib(
+    ssize_t[::1] csr_indices,
+    ssize_t[::1] csr_indptr,
+    DTYPE_t[::1] csr_data,
+    int origin_vert_in,
+    int vertex_count):
+    """ Compute single-source shortest path (from one vertex to all vertices)
+        using a priority queue based on a Fibonacci heap.
+
+       Does not return predecessors.
+    """
+
+    cdef:
+        FibonacciHeap heap
+        FibonacciNode *v
+        FibonacciNode *current_node
+        FibonacciNode *nodes = <FibonacciNode*> malloc(vertex_count * sizeof(FibonacciNode))
+
+
+    path_lengths = cnp.ndarray(vertex_count, dtype=DTYPE)
+    free(nodes)
 
     return path_lengths
