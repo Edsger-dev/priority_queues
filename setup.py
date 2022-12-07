@@ -67,10 +67,11 @@ setup(
     license=license,
     package_dir={"": "src"},
     packages=find_packages(where="src"),
-    package_data={
-        "priority_queues.commons": ["src/priority_queues/commons.pxd"],
-        "priority_queues.pq_bin_heap": ["src/priority_queues/pq_bin_heap.pxd"],
-    },
+    # package_data={
+    #     "priority_queues.commons": ["src/priority_queues/commons.pxd"],
+    #     "priority_queues.pq_bin_heap": ["src/priority_queues/pq_bin_heap.pxd"],
+    #     "priority_queues.pq_fib_heap": ["src/priority_queues/pq_fib_heap.pxd"],
+    # },
     ext_modules=cythonize(
         extensions,
         compiler_directives={"language_level": "3"},
