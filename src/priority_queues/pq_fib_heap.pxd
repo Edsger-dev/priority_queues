@@ -29,3 +29,4 @@ cdef struct FibonacciHeap:
 
 
 cdef void initialize_node(FibonacciNode*, unsigned int, double) nogil
+cdef void insert_node(FibonacciHeap*, FibonacciNode*) nogil

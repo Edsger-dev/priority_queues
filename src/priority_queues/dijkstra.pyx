@@ -20,7 +20,8 @@ from priority_queues.pq_bin_heap cimport (
 from priority_queues.pq_fib_heap cimport (
     FibonacciNode,
     FibonacciHeap,
-    initialize_node)
+    initialize_node,
+    insert_node)
 
 
 cpdef cnp.ndarray path_length_from_bin(
@@ -101,9 +102,13 @@ cpdef cnp.ndarray path_length_from_fib(
     # initialization of the heap elements 
     # all nodes have INFINITY key and NOT_IN_HEAP state
     for i in range(<ssize_t>vertex_count):
-        initialize_node(&nodes[i], i, DTYPE_INF)
+        initialize_node(&nodes[i], <unsigned int>i, <double>DTYPE_INF)
 
-
+    # the key is set to zero for the origin vertex,
+    # which is inserted into the heap
+    heap.min_node = NULL
+    nodes[origin_vert_in].val = 0.0
+    insert_node(&heap, &nodes[origin_vert_in])
 
 
     path_lengths = cnp.ndarray(vertex_count, dtype=DTYPE)
