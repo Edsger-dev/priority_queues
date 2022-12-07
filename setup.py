@@ -32,7 +32,7 @@ with open("LICENSE") as f:
 extra_compile_args = ["-Ofast"]
 
 extensions = [
-    Extension("priority_queues.commons", ["src/priority_queues/commons.pyx"]),
+    Extension("priority_queues.commons", ["src/priority_queues/commons.pyx"], define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]),
     Extension(
         "priority_queues.pq_bin_heap",
         ["src/priority_queues/pq_bin_heap.pyx"],
