@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from scipy.sparse import coo_array, csc_matrix, csr_matrix
+
 # from scipy.sparse.csgraph import reverse_cuthill_mckee
 
 from priority_queues.commons import DTYPE_INF_PY, DTYPE_PY, Timer
@@ -258,7 +259,6 @@ class ShortestPath:
                 self._edge_weights,
                 vertex_new,
                 self.n_vertices,
-                n_jobs=-1,
             )
         t.stop()
         self.time["compute path length"] = t.interval
