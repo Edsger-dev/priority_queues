@@ -72,7 +72,7 @@ class ShortestPath:
         orientation="one-to-all",
         check_edges=True,
         permute=False,
-        heap_type="bin"
+        heap_type="bin",
     ):
         self.time = {}
         self._return_Series = True
