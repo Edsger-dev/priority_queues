@@ -129,8 +129,8 @@ cpdef cnp.ndarray path_length_from_fib(
             vert_state = current_node.state
             if vert_state != 1:
                 head_vert_val = tail_vert_val + csr_data[idx]
-                if vert_state == 2:
-                    current_node.state = 3
+                if vert_state == 2:  # NOT_IN_HEAP
+                    current_node.state = 3  # IN_HEAP
                     current_node.val = head_vert_val
                     insert_node(&heap, current_node)
                 elif current_node.val > head_vert_val:
