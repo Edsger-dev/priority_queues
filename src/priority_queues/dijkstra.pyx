@@ -7,7 +7,9 @@ from libc.stdlib cimport free, malloc
 import numpy as np
 
 from priority_queues.commons cimport (
-    DTYPE, DTYPE_INF, NOT_IN_HEAP, SCANNED, DTYPE_t)
+    DTYPE, DTYPE_INF, NOT_IN_HEAP, SCANNED, DTYPE_t, ElementState)
+
+cimport priority_queues.pq_bin_heap_basic as bhb
 
 from priority_queues.pq_bin_heap cimport (
     BinaryHeap,
@@ -26,6 +28,63 @@ from priority_queues.pq_fib_heap cimport (
     decrease_val)
 
 
+
+cpdef cnp.ndarray path_length_from_bin_basic(
+    ssize_t[::1] csr_indices,
+    ssize_t[::1] csr_indptr,
+    DTYPE_t[::1] csr_data,
+    int origin_vert_in,
+    int vertex_count):
+    """ Compute single-source shortest path (from one vertex to all vertices)
+        using a priority queue based on a bin heap.
+
+       Does not return predecessors.
+    """
+
+    cdef:
+        ssize_t tail_vert_idx, head_vert_idx, idx  # indices
+        DTYPE_t tail_vert_val, head_vert_val  # vertex travel times
+        bhb.PriorityQueue pqueue 
+        ElementState vert_state  # vertex state
+        ssize_t origin_vert = <ssize_t>origin_vert_in
+
+    # initialization of the heap elements 
+    # all nodes have INFINITY key and NOT_IN_HEAP state
+    bhb.init_pqueue(&pqueue, <ssize_t>vertex_count)
+
+    with nogil:
+
+        # the key is set to zero for the origin vertex,
+        # which is inserted into the heap
+        bhb.insert(&pqueue, origin_vert, 0.0)
+
+        # main loop
+        while pqueue.size > 0:
+            tail_vert_idx = bhb.extract_min(&pqueue)
+            tail_vert_val = pqueue.Elements[tail_vert_idx].key
+
+            # loop on outgoing edges
+            for idx in range(csr_indptr[tail_vert_idx], csr_indptr[tail_vert_idx + 1]):
+                head_vert_idx = csr_indices[idx]
+                vert_state = pqueue.Elements[head_vert_idx].state
+                if vert_state != SCANNED:
+                    head_vert_val = tail_vert_val + csr_data[idx]
+                    if vert_state == NOT_IN_HEAP:
+                        bhb.insert(&pqueue, head_vert_idx, head_vert_val)
+                    elif pqueue.Elements[head_vert_idx].key > head_vert_val:
+                        bhb.decrease_key(&pqueue, head_vert_idx, head_vert_val)
+
+    # copy the results into a numpy array
+    path_lengths = cnp.ndarray(vertex_count, dtype=DTYPE)
+    for idx in range(<ssize_t>vertex_count):
+        path_lengths[idx] = pqueue.Elements[idx].key
+
+    # cleanup
+    bhb.free_pqueue(&pqueue)  
+
+    return path_lengths
+
+
 cpdef cnp.ndarray path_length_from_bin(
     ssize_t[::1] csr_indices,
     ssize_t[::1] csr_indptr,
@@ -42,7 +101,7 @@ cpdef cnp.ndarray path_length_from_bin(
         ssize_t tail_vert_idx, head_vert_idx, idx  # indices
         DTYPE_t tail_vert_val, head_vert_val  # vertex travel times
         BinaryHeap bheap  # binary heap
-        int vert_state  # vertex state
+        ElementState vert_state  # vertex state
         ssize_t origin_vert = <ssize_t>origin_vert_in
 
     # initialization of the heap elements 

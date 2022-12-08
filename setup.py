@@ -38,6 +38,11 @@ extensions = [
         define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")],
     ),
     Extension(
+        "priority_queues.pq_bin_heap_basic",
+        ["src/priority_queues/pq_bin_heap_basic.pyx"],
+        extra_compile_args=extra_compile_args,
+    ),
+    Extension(
         "priority_queues.pq_bin_heap",
         ["src/priority_queues/pq_bin_heap.pyx"],
         extra_compile_args=extra_compile_args,
