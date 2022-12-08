@@ -30,3 +30,5 @@ cdef struct FibonacciHeap:
 
 cdef void initialize_node(FibonacciNode*, unsigned int, double) nogil
 cdef void insert_node(FibonacciHeap*, FibonacciNode*) nogil
+cdef FibonacciNode* remove_min(FibonacciHeap*) nogil
+cdef void decrease_val(FibonacciHeap*, FibonacciNode*, DTYPE_t) nogil
