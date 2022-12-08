@@ -93,15 +93,6 @@ class ShortestPath:
         t.start()
         self._permute = permute
         if self._permute:
-
-            # test RCM
-            # self.n_vertices = self._edges[[source, target]].max().max() + 1
-            # graph_csr = convert_sorted_graph_to_csr(
-            #     self._edges, source, target, weight, self.n_vertices
-            # )
-            # self._vertices = pd.DataFrame(data={'vert_idx_new': reverse_cuthill_mckee(graph_csr)})
-            # self._vertices['vert_idx_old'] = self._vertices.index
-
             self._vertices = self._permute_graph(source, target)
             self.n_vertices = len(self._vertices)
         else:
