@@ -5,9 +5,7 @@ import graph_tool as gt
 import numpy as np
 import pandas as pd
 from graph_tool import topology
-
 from priority_queues.shortest_path import ShortestPath
-
 
 parser = ArgumentParser(description="Command line interface to perf_01.py")
 parser.add_argument(

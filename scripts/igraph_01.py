@@ -4,9 +4,7 @@ from time import perf_counter
 import numpy as np
 import pandas as pd
 from igraph import Graph
-
 from priority_queues.shortest_path import ShortestPath
-
 
 parser = ArgumentParser(description="Command line interface to perf_01.py")
 parser.add_argument(

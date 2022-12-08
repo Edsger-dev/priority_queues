@@ -17,10 +17,9 @@ import numpy as np
 import pandas as pd
 from graph_tool import topology
 from igraph import Graph
+from priority_queues.shortest_path import ShortestPath
 from scipy.sparse import coo_array, csr_matrix
 from scipy.sparse.csgraph import dijkstra
-
-from priority_queues.shortest_path import ShortestPath
 
 DATA_DIR = "/home/francois/Data/Disk_1/"
 
@@ -119,7 +118,13 @@ gc.collect()
 # ===========================
 
 start = perf_counter()
-sp = ShortestPath(edges_df, orientation="one-to-all", check_edges=False, permute=False, heap_type="bin")
+sp = ShortestPath(
+    edges_df,
+    orientation="one-to-all",
+    check_edges=False,
+    permute=False,
+    heap_type="bin",
+)
 end = perf_counter()
 elapsed_time = end - start
 print(f"PQ Prepare the data - Elapsed time: {elapsed_time:6.2f} s")
@@ -144,7 +149,13 @@ gc.collect()
 # ==============================
 
 start = perf_counter()
-sp = ShortestPath(edges_df, orientation="one-to-all", check_edges=False, permute=False, heap_type="fib")
+sp = ShortestPath(
+    edges_df,
+    orientation="one-to-all",
+    check_edges=False,
+    permute=False,
+    heap_type="fib",
+)
 end = perf_counter()
 elapsed_time = end - start
 print(f"PQ Prepare the data - Elapsed time: {elapsed_time:6.2f} s")

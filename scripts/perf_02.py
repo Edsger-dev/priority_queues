@@ -9,10 +9,9 @@ from time import perf_counter
 
 import numpy as np
 import pandas as pd
+from priority_queues.shortest_path import ShortestPath, convert_sorted_graph_to_csr
 from scipy.sparse import coo_array
 from scipy.sparse.csgraph import dijkstra
-
-from priority_queues.shortest_path import ShortestPath, convert_sorted_graph_to_csr
 
 DATA_DIR = "/home/francois/Data/Disk_1/"
 
@@ -55,7 +54,7 @@ parser.add_argument(
     type=str,
     required=False,
     default="bin",
-    )
+)
 args = parser.parse_args()
 reg = args.network_name
 idx_from = args.idx_from
@@ -147,7 +146,11 @@ elif lib == "PQ":
 
     start = perf_counter()
     sp = ShortestPath(
-        edges_df, orientation="one-to-all", check_edges=False, permute=False, heap_type=heap_type
+        edges_df,
+        orientation="one-to-all",
+        check_edges=False,
+        permute=False,
+        heap_type=heap_type,
     )
     end = perf_counter()
     elapsed_time = end - start

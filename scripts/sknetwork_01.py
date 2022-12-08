@@ -6,13 +6,11 @@ https://scikit-network.readthedocs.io/en/latest/reference/path.html#shortest-pat
 from argparse import ArgumentParser
 from time import perf_counter
 
-from sknetwork.path import get_distances
 import numpy as np
 import pandas as pd
-from scipy.sparse import coo_array, csr_matrix
-
 from priority_queues.shortest_path import ShortestPath, convert_sorted_graph_to_csr
-
+from scipy.sparse import coo_array, csr_matrix
+from sknetwork.path import get_distances
 
 parser = ArgumentParser(description="Command line interface to perf_01.py")
 parser.add_argument(
