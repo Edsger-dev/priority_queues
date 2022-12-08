@@ -1,9 +1,6 @@
 """
 single library
 No check for solution
-
-https://askubuntu.com/questions/1052644/prevent-other-processes-for-performance
-sudo nice -n -20 /home/francois/miniconda3/envs/algo/bin/python perf_01.py -n USA
 """
 
 import os
@@ -49,9 +46,20 @@ parser.add_argument(
     required=False,
     default=1000,
 )
+parser.add_argument(
+    "-t",
+    "--heap_type",
+    dest="heap_type",
+    help="heap type in the priority_queues library : 'fib' or 'bin'",
+    metavar="TXT",
+    type=str,
+    required=False,
+    default="bin",
+    )
 args = parser.parse_args()
 reg = args.network_name
 idx_from = args.idx_from
+heap_type = args.heap_type
 
 
 # network name check
@@ -139,7 +147,7 @@ elif lib == "PQ":
 
     start = perf_counter()
     sp = ShortestPath(
-        edges_df, orientation="one-to-all", check_edges=False, permute=False
+        edges_df, orientation="one-to-all", check_edges=False, permute=False, heap_type=heap_type
     )
     end = perf_counter()
     elapsed_time = end - start
