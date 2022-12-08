@@ -3,7 +3,44 @@ import pandas as pd
 from scipy.sparse import coo_array, csc_matrix, csr_matrix
 
 from priority_queues.commons import DTYPE_INF_PY, DTYPE_PY, Timer
-from priority_queues.dijkstra import path_length_from_bin, path_length_from_fib
+from priority_queues.dijkstra import (
+    path_length_from_bin, path_length_from_fib, 
+    coo_tocsr, coo_tocsc
+)
+
+        
+def convert_graph_to_csr(edges_df, source, target, weight, vertex_count, edge_count):
+
+    fs_indptr = np.zeros(vertex_count + 1, dtype=np.uint32)  # make sure it is filled with zeros
+    fs_indices = np.empty(edge_count, dtype=np.uint32)
+    fs_data = np.empty(edge_count, dtype=np.float64)
+
+    coo_tocsr(
+        edges_df[source].values.astype(np.uint32),
+        edges_df[target].values.astype(np.uint32),
+        edges_df[weight].values.astype(np.float64),
+        fs_indptr,
+        fs_indices,
+        fs_data)
+
+    return fs_indptr, fs_indices, fs_data
+
+
+def convert_graph_to_csc(edges_df, source, target, weight, vertex_count, edge_count):
+
+    rs_indptr = np.zeros(vertex_count + 1, dtype=np.uint32)  # make sure it is filled with zeros
+    rs_indices = np.empty(edge_count, dtype=np.uint32)
+    rs_data = np.empty(edge_count, dtype=np.float64)
+
+    coo_tocsc(
+        edges_df[source].values.astype(np.uint32),
+        edges_df[target].values.astype(np.uint32),
+        edges_df[weight].values.astype(np.float64),
+        rs_indptr,
+        rs_indices,
+        rs_data)
+
+    return rs_indptr, rs_indices, rs_data
 
 
 def convert_sorted_graph_to_csr(edges_df, source, target, weight, vertex_count):
@@ -107,19 +144,19 @@ class ShortestPath:
         self._check_orientation(orientation)
         self._orientation = orientation
         if self._orientation == "one-to-all":
-            graph_csr = convert_sorted_graph_to_csr(
-                self._edges, source, target, weight, self.n_vertices
+            fs_indptr, fs_indices, fs_data = convert_graph_to_csr(
+                self._edges, source, target, weight, self.n_vertices, self.n_edges
             )
-            self._indices = graph_csr.indices.astype(np.intp)
-            self._indptr = graph_csr.indptr.astype(np.intp)
-            self._edge_weights = graph_csr.data
+            self._indices = fs_indices.astype(np.intp)
+            self._indptr = fs_indptr.astype(np.intp)
+            self._edge_weights = fs_data
         else:
-            graph_csc = convert_sorted_graph_to_csc(
-                self._edges, source, target, weight, self.n_vertices
+            rs_indptr, rs_indices, rs_data = convert_graph_to_csc(
+                self._edges, source, target, weight, self.n_vertices, self.n_edges
             )
-            self._indices = graph_csc.indices.astype(np.intp)
-            self._indptr = graph_csc.indptr.astype(np.intp)
-            self._edge_weights = graph_csc.data
+            self._indices = rs_indices.astype(np.intp)
+            self._indptr = rs_indptr.astype(np.intp)
+            self._edge_weights = rs_data
             raise NotImplementedError("one-to_all shortest path not implemented yet")
         t.stop()
         self.time["convert to CSR/CSC"] = t.interval
@@ -316,3 +353,4 @@ class ShortestPath:
 
     def get_timings(self):
         return pd.DataFrame.from_dict(self.time, orient="index", columns=["et_s"])
+

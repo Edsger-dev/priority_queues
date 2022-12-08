@@ -143,3 +143,79 @@ cpdef cnp.ndarray path_length_from_fib(
     free(nodes)
 
     return path_lengths
+
+
+cpdef void coo_tocsr(
+    cnp.uint32_t [::1] Ai,
+    cnp.uint32_t [::1] Aj,
+    cnp.float64_t[::1] Ax,
+    cnp.uint32_t [::1] Bp,
+    cnp.uint32_t [::1] Bj,
+    cnp.float64_t[::1] Bx) nogil:
+
+    cdef:
+        ssize_t i, row, dest
+        ssize_t n_vert = <ssize_t>(Bp.shape[0] - 1)
+        ssize_t n_edge = <ssize_t>Bj.shape[0]
+        cnp.uint32_t temp, cumsum, last
+
+    for i in range(n_edge):
+        Bp[<ssize_t>Ai[i]] += 1
+
+    cumsum = 0
+    for i in range(n_vert):
+        temp = Bp[i]
+        Bp[i] = cumsum
+        cumsum += temp
+    Bp[n_vert] = <cnp.uint32_t>n_edge 
+
+    for i in range(n_edge):
+        row  = <ssize_t>Ai[i]
+        dest = <ssize_t>Bp[row]
+        Bj[dest] = Aj[i]
+        Bx[dest] = Ax[i]
+        Bp[row] += 1
+
+    last = 0
+    for i in range(n_vert + 1):
+        temp = Bp[i]
+        Bp[i] = last
+        last = temp
+
+
+cpdef void coo_tocsc(
+    cnp.uint32_t [::1] Ai,
+    cnp.uint32_t [::1] Aj,
+    cnp.float64_t[::1] Ax,
+    cnp.uint32_t [::1] Bp,
+    cnp.uint32_t [::1] Bi,
+    cnp.float64_t[::1] Bx) nogil:
+
+    cdef:
+        ssize_t i, col, dest
+        ssize_t n_vert = <ssize_t>(Bp.shape[0] - 1)
+        ssize_t n_edge = <ssize_t>Bi.shape[0]
+        cnp.uint32_t temp, cumsum, last
+
+    for i in range(n_edge):
+        Bp[<ssize_t>Aj[i]] += 1
+
+    cumsum = 0
+    for i in range(n_vert):
+        temp = Bp[i]
+        Bp[i] = cumsum
+        cumsum += temp
+    Bp[<ssize_t>n_vert] = <cnp.uint32_t>n_edge 
+
+    for i in range(n_edge):
+        col  = <ssize_t>Aj[i]
+        dest = <ssize_t>Bp[col]
+        Bi[dest] = Ai[i]
+        Bx[dest] = Ax[i]
+        Bp[col] += 1
+
+    last = 0
+    for i in range(n_vert + 1):
+        temp = Bp[i]
+        Bp[i] = last
+        last = temp
