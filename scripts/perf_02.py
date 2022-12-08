@@ -9,9 +9,11 @@ from time import perf_counter
 
 import numpy as np
 import pandas as pd
-from priority_queues.shortest_path import ShortestPath, convert_sorted_graph_to_csr
 from scipy.sparse import coo_array
 from scipy.sparse.csgraph import dijkstra
+
+from priority_queues.shortest_path import ShortestPath, convert_sorted_graph_to_csr
+
 
 DATA_DIR = "/home/francois/Data/Disk_1/"
 

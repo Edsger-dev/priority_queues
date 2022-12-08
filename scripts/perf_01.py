@@ -17,9 +17,11 @@ import numpy as np
 import pandas as pd
 from graph_tool import topology
 from igraph import Graph
-from priority_queues.shortest_path import ShortestPath
 from scipy.sparse import coo_array, csr_matrix
 from scipy.sparse.csgraph import dijkstra
+
+from priority_queues.shortest_path import ShortestPath
+
 
 DATA_DIR = "/home/francois/Data/Disk_1/"
 
