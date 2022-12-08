@@ -3,7 +3,7 @@ import pandas as pd
 from scipy.sparse import coo_array, csc_matrix, csr_matrix
 
 from priority_queues.commons import DTYPE_INF_PY, DTYPE_PY, Timer
-from priority_queues.dijkstra import path_length_from_bin
+from priority_queues.dijkstra import path_length_from_bin, path_length_from_fib
 
 
 def convert_sorted_graph_to_csr(edges_df, source, target, weight, vertex_count):
@@ -72,6 +72,7 @@ class ShortestPath:
         orientation="one-to-all",
         check_edges=True,
         permute=False,
+        heap_type="bin"
     ):
         self.time = {}
         self._return_Series = True
@@ -85,6 +86,8 @@ class ShortestPath:
         self.n_edges = len(self._edges)
         t.stop()
         self.time["load the edges"] = t.interval
+
+        self._heap_type = heap_type
 
         # reindex the vertices
         t = Timer()
@@ -242,13 +245,22 @@ class ShortestPath:
         t = Timer()
         t.start()
         if self._orientation == "one-to-all":
-            path_length_values = path_length_from_bin(
-                self._indices,
-                self._indptr,
-                self._edge_weights,
-                vertex_new,
-                self.n_vertices,
-            )
+            if self._heap_type == "bin":
+                path_length_values = path_length_from_bin(
+                    self._indices,
+                    self._indptr,
+                    self._edge_weights,
+                    vertex_new,
+                    self.n_vertices,
+                )
+            else:
+                path_length_values = path_length_from_fib(
+                    self._indices,
+                    self._indptr,
+                    self._edge_weights,
+                    vertex_new,
+                    self.n_vertices,
+                )
         t.stop()
         self.time["compute path length"] = t.interval
 
