@@ -1,5 +1,6 @@
 networkx
-graph-tools
+graph-tool
 networkit
-igraph
+python-igraph
 scikit-network
+pyarrow
