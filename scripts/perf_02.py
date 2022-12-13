@@ -1,6 +1,9 @@
 """
 single library
 No check for solution
+
+example :
+$ python perf_02.py -n NY -l PQ -t bin_basic
 """
 
 import os
