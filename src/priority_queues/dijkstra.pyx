@@ -89,7 +89,9 @@ cpdef cnp.ndarray path_length_from_bin_basic(
             # printf("\n")
             # line += 1
             ####
-    fflush(stdout)
+    ####
+    # fflush(stdout)
+    ####
 
     # copy the results into a numpy array
     path_lengths = cnp.ndarray(vertex_count, dtype=DTYPE)
