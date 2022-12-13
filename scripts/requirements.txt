@@ -1,5 +1,5 @@
 networkx
-graph_tools
+graph-tools
 networkit
 igraph
 scikit-network
