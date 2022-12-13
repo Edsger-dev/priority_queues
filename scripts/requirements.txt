@@ -1,0 +1,5 @@
+networkx
+graph_tools
+networkit
+igraph
+scikit-network
