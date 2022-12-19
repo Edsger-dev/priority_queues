@@ -26,19 +26,19 @@ from priority_queues.commons cimport (DTYPE, DTYPE_INF, IN_HEAP, N_THREADS,
 
 cdef void init_heap(
     BinaryHeap* bheap,
-    ssize_t length) nogil:
+    size_t length) nogil:
     """Initialize the binary heap.
 
     input
     =====
     * BinaryHeap* bheap : binary heap
-    * ssize_t length : length (maximum size) of the heap
+    * size_t length : length (maximum size) of the heap
     """
-    cdef ssize_t i
+    cdef size_t i
 
     bheap.length = length
     bheap.size = 0
-    bheap.A = <ssize_t*> malloc(length * sizeof(ssize_t))
+    bheap.A = <size_t*> malloc(length * sizeof(size_t))
     bheap.elements = <Element*> malloc(length * sizeof(Element))
 
     for i in range(length):
@@ -48,21 +48,21 @@ cdef void init_heap(
 
 cdef void init_heap_para(
     BinaryHeap* bheap,
-    ssize_t length,
+    size_t length,
     int num_threads) nogil:
     """Initialize the binary heap with a parallel loop.
 
     input
     =====
     * BinaryHeap* bheap : binary heap
-    * ssize_t length : length (maximum size) of the heap
+    * size_t length : length (maximum size) of the heap
     * int num_threads :  number of threads for the parallel job
     """
-    cdef ssize_t i
+    cdef size_t i
 
     bheap.length = length
     bheap.size = 0
-    bheap.A = <ssize_t*> malloc(length * sizeof(ssize_t))
+    bheap.A = <size_t*> malloc(length * sizeof(size_t))
     bheap.elements = <Element*> malloc(length * sizeof(Element))
 
     for i in prange(
@@ -79,13 +79,13 @@ cdef void init_heap_para(
 
 cdef void _initialize_element(
     BinaryHeap* bheap,
-    ssize_t element_idx) nogil:
+    size_t element_idx) nogil:
     """Initialize a single element.
 
     input
     =====
     * BinaryHeap* bheap : binary heap
-    * ssize_t element_idx : index of the element in the element array
+    * size_t element_idx : index of the element in the element array
     """
     bheap.elements[element_idx].key = DTYPE_INF
     bheap.elements[element_idx].state = NOT_IN_HEAP
@@ -106,14 +106,14 @@ cdef void free_heap(
 
 cdef void min_heap_insert(
     BinaryHeap* bheap,
-    ssize_t element_idx,
+    size_t element_idx,
     DTYPE_t key) nogil:
     """Insert an element into the heap and reorder the heap.
 
     input
     =====
     * BinaryHeap* bheap : binary heap
-    * ssize_t element_idx : index of the element in the element array
+    * size_t element_idx : index of the element in the element array
     * DTYPE_t key : key value of the element
 
     assumptions
@@ -121,7 +121,7 @@ cdef void min_heap_insert(
     * the element bheap.elements[element_idx] is not in the heap
     * its new key is smaller than DTYPE_INF
     """
-    cdef ssize_t node_idx = bheap.size
+    cdef size_t node_idx = bheap.size
 
     bheap.size += 1
     bheap.elements[element_idx].state = IN_HEAP
@@ -132,14 +132,14 @@ cdef void min_heap_insert(
 
 cdef void decrease_key_from_element_index(
     BinaryHeap* bheap, 
-    ssize_t element_idx, 
+    size_t element_idx, 
     DTYPE_t key_new) nogil:
     """Decrease the key of a element in the heap, given its element index.
 
     input
     =====
     * BinaryHeap* bheap : binary heap
-    * ssize_t element_idx : index of the element in the element array
+    * size_t element_idx : index of the element in the element array
     * DTYPE_t key_new : new value of the element key 
 
     assumption
@@ -186,7 +186,7 @@ cdef bint is_empty(BinaryHeap* bheap) nogil:
     return isempty
 
 
-cdef ssize_t extract_min(BinaryHeap* bheap) nogil:
+cdef size_t extract_min(BinaryHeap* bheap) nogil:
     """Extract element with min keay from the heap, 
     and return its element index.
 
@@ -196,15 +196,15 @@ cdef ssize_t extract_min(BinaryHeap* bheap) nogil:
 
     output
     ======
-    * ssize_t : element index with min key
+    * size_t : element index with min key
 
     assumption
     ==========
     * bheap.size > 0
     """
     cdef: 
-        ssize_t element_idx = bheap.A[0]  # min element index
-        ssize_t node_idx = bheap.size - 1  # last leaf node index
+        size_t element_idx = bheap.A[0]  # min element index
+        size_t node_idx = bheap.size - 1  # last leaf node index
 
     # printf("%d\n", bheap.size)
 
@@ -224,19 +224,19 @@ cdef ssize_t extract_min(BinaryHeap* bheap) nogil:
 
 cdef void _exchange_nodes(
     BinaryHeap* bheap, 
-    ssize_t node_i,
-    ssize_t node_j) nogil:
+    size_t node_i,
+    size_t node_j) nogil:
     """Exchange two nodes in the heap.
 
     input
     =====
     * BinaryHeap* bheap: binary heap
-    * ssize_t node_i: first node index
-    * ssize_t node_j: second node index
+    * size_t node_i: first node index
+    * size_t node_j: second node index
     """
     cdef: 
-        ssize_t element_i = bheap.A[node_i]
-        ssize_t element_j = bheap.A[node_j]
+        size_t element_i = bheap.A[node_i]
+        size_t element_j = bheap.A[node_j]
     
     # exchange element indices in the heap array
     bheap.A[node_i] = element_j
@@ -249,17 +249,17 @@ cdef void _exchange_nodes(
 
 cdef void _min_heapify(
     BinaryHeap* bheap,
-    ssize_t node_idx) nogil:
+    size_t node_idx) nogil:
     """Re-order sub-tree under a given node (given its node index) 
     until it satisfies the heap property.
 
     input
     =====
     * BinaryHeap* bheap : binary heap
-    * ssize_t node_idx : node index
+    * size_t node_idx : node index
     """
     cdef: 
-        ssize_t l, r, i = node_idx, s
+        size_t l, r, i = node_idx, s
         # DTYPE_t key_i, key_l, key_s
 
     while True:
@@ -342,14 +342,14 @@ cdef void _min_heapify(
 
 cdef void _decrease_key_from_node_index(
     BinaryHeap* bheap,
-    ssize_t node_idx, 
+    size_t node_idx, 
     DTYPE_t key_new) nogil:
     """Decrease the key of an element in the heap, given its tree index.
 
     input
     =====
     * BinaryHeap* bheap : binary heap
-    * ssize_t node_idx : node index
+    * size_t node_idx : node index
     * DTYPE_t key_new : new key value
 
     assumptions
@@ -358,7 +358,7 @@ cdef void _decrease_key_from_node_index(
     * key_new < bheap.elements[bheap.A[node_idx]].key
     """
     cdef:
-        ssize_t i = node_idx, j
+        size_t i = node_idx, j
         DTYPE_t key_j
 
     bheap.elements[bheap.A[i]].key = key_new
@@ -409,7 +409,7 @@ cdef cnp.ndarray copy_keys_to_numpy_para(
 
 cdef cnp.ndarray copy_keys_to_numpy(
     BinaryHeap* bheap,
-    ssize_t vertex_count
+    size_t vertex_count
 ):
     """Copy the keys into a numpy array.
 
@@ -427,7 +427,7 @@ cdef cnp.ndarray copy_keys_to_numpy(
     path_lengths = cnp.ndarray(vertex_count, dtype=DTYPE)
 
     cdef:
-        ssize_t i  # loop counter
+        size_t i  # loop counter
         DTYPE_t[::1] path_lengths_view = path_lengths
 
     with nogil:

@@ -104,6 +104,7 @@ def test_check_edges_05(braess):
 def test_run_01(braess):
 
     edges_df = braess
+    edges_df[["source", "target"]] = edges_df[["source", "target"]].astype(np.uint32)
     sp = ShortestPath(edges_df, orientation="one-to-all", check_edges=False)
     path_lengths = sp.run(vertex_idx=0, return_Series=True)
     path_lengths_ref = pd.Series([0.0, 1.0, 1.0, 2.0])
@@ -138,6 +139,7 @@ def test_run_02(random_seed=124, n=1000):
     # In-house
     # without graph permutation
     # return_inf=True
+    edges_df[["source", "target"]] = edges_df[["source", "target"]].astype(np.uint32)
     sp = ShortestPath(
         edges_df, orientation="one-to-all", check_edges=True, permute=False
     )
@@ -198,6 +200,7 @@ def test_run_03(random_seed=124, n=100, index_offset=10):
     # In-house
     # without graph permutation
     # return_inf=True
+    edges_df[["source", "target"]] = edges_df[["source", "target"]].astype(np.uint32)
     sp = ShortestPath(
         edges_df, orientation="one-to-all", check_edges=True, permute=True
     )

@@ -17,7 +17,7 @@ cpdef init_01():
 
     cdef: 
         BinaryHeap bheap
-        ssize_t l = 4
+        size_t l = 4
 
     init_heap(&bheap, l)
 
@@ -36,7 +36,7 @@ cpdef init_02():
 
     cdef: 
         BinaryHeap bheap
-        ssize_t l = 40
+        size_t l = 40
 
     init_heap_para(&bheap, l, 4)
 
@@ -138,7 +138,7 @@ cpdef insert_03(n=4):
     """
     cdef: 
         BinaryHeap bheap
-        ssize_t i
+        size_t i
         DTYPE_t key = 1.0
 
     init_heap(&bheap, n)
@@ -265,7 +265,7 @@ cpdef decrease_key_from_element_index_01():
 cdef void heapsort(DTYPE_t[:] values_in, DTYPE_t[:] values_out) nogil:
 
     cdef:
-        ssize_t i, l = <ssize_t>values_in.shape[0]
+        size_t i, l = <size_t>values_in.shape[0]
         BinaryHeap bheap
     
     init_heap(&bheap, l)

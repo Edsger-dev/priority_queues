@@ -156,15 +156,15 @@ class ShortestPath:
             fs_indptr, fs_indices, fs_data = convert_graph_to_csr(
                 self._edges, source, target, weight, self.n_vertices, self.n_edges
             )
-            self._indices = fs_indices.astype(int)
-            self._indptr = fs_indptr.astype(int)
+            self._indices = fs_indices.astype(np.uint32)
+            self._indptr = fs_indptr.astype(np.uint32)
             self._edge_weights = fs_data.astype(DTYPE_PY)
         else:
             rs_indptr, rs_indices, rs_data = convert_graph_to_csc(
                 self._edges, source, target, weight, self.n_vertices, self.n_edges
             )
-            self._indices = rs_indices.astype(int)
-            self._indptr = rs_indptr.astype(int)
+            self._indices = rs_indices.astype(np.uint32)
+            self._indptr = rs_indptr.astype(np.uint32)
             self._edge_weights = rs_data.astype(DTYPE_PY)
             raise NotImplementedError("one-to_all shortest path not implemented yet")
         t.stop()
