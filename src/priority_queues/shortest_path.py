@@ -6,6 +6,7 @@ from priority_queues.commons import DTYPE_INF_PY, DTYPE_PY, Timer
 from priority_queues.dijkstra import (
     path_length_from_bin,
     path_length_from_3ary,
+    path_length_from_4ary,
     path_length_from_fib,
     path_length_from_bin_basic,
     coo_tocsr,
@@ -310,6 +311,14 @@ class ShortestPath:
                 )
             elif self._heap_type == "3ary":
                 path_length_values = path_length_from_3ary(
+                    self._indices,
+                    self._indptr,
+                    self._edge_weights,
+                    vertex_new,
+                    self.n_vertices,
+                )
+            elif self._heap_type == "4ary":
+                path_length_values = path_length_from_4ary(
                     self._indices,
                     self._indptr,
                     self._edge_weights,

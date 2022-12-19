@@ -53,6 +53,11 @@ extensions = [
         extra_compile_args=extra_compile_args,
     ),
     Extension(
+        "priority_queues.pq_4ary_heap",
+        ["src/priority_queues/pq_4ary_heap.pyx"],
+        extra_compile_args=extra_compile_args,
+    ),
+    Extension(
         "priority_queues.pq_bin_heap_tests",
         ["src/priority_queues/pq_bin_heap_tests.pyx"],
     ),
