@@ -260,78 +260,28 @@ cdef void _min_heapify(
     """
     cdef: 
         size_t l, r, i = node_idx, s
-        # DTYPE_t key_i, key_l, key_s
+        DTYPE_t val_tmp, val_min
 
     while True:
 
         l =  2 * i + 1  
-        # l = (i << 1) + 1
         r = l + 1
-        
-        # key_i = pqueue.Elements[pqueue.A[i]].key
-        # if (l < pqueue.size):
-        #     key_l = pqueue.Elements[pqueue.A[l]].key
-        #     if (key_l < key_i):
-        #         s = l
-        #         key_s = key_l
-        #     else:
-        #         s = i
-        #         key_s = key_i
-        # else:
-        #     s = i
-        #     key_s = key_i
 
-        # if (
-        #     (r < pqueue.size) and 
-        #     (pqueue.Elements[pqueue.A[r]].key < key_s)
-        # ):
-        #     s = r
-
-        # key_i = pqueue.Elements[pqueue.A[i]].key
-        # s = i
-        # key_s = key_i
-        # if (r < pqueue.size):
-        #     key_r = pqueue.Elements[pqueue.A[r]].key
-        #     if (key_r < key_i):
-        #         s = r
-        #         key_s = key_r
-        #     if (pqueue.Elements[pqueue.A[l]].key < key_s):
-        #         s = l
-        # else:
-        #     if (
-        #         (l < pqueue.size) and 
-        #         (pqueue.Elements[pqueue.A[l]].key < pqueue.Elements[pqueue.A[s]].key)
-        #     ):
-        #         s = l
-
-
-        # optim
         s = i
+        val_min = pqueue.Elements[pqueue.A[s]].key
         if (r < pqueue.size):
-            if (pqueue.Elements[pqueue.A[r]].key < pqueue.Elements[pqueue.A[s]].key):
+            val_tmp = pqueue.Elements[pqueue.A[r]].key
+            if val_tmp < val_min:
                 s = r
-            if (pqueue.Elements[pqueue.A[l]].key < pqueue.Elements[pqueue.A[s]].key):
+                val_min = val_tmp
+            val_tmp = pqueue.Elements[pqueue.A[l]].key
+            if val_tmp < val_min:
                 s = l
         else:
-            if (
-                (l < pqueue.size) and 
-                (pqueue.Elements[pqueue.A[l]].key < pqueue.Elements[pqueue.A[s]].key)
-            ):
-                s = l
-
-        # if (
-        #     (l < pqueue.size) and 
-        #     (pqueue.Elements[pqueue.A[l]].key < pqueue.Elements[pqueue.A[i]].key)
-        # ):
-        #     s = l
-        # else:
-        #     s = i
-
-        # if (
-        #     (r < pqueue.size) and 
-        #     (pqueue.Elements[pqueue.A[r]].key < pqueue.Elements[pqueue.A[s]].key)
-        # ):
-        #     s = r
+            if (l < pqueue.size):
+                val_tmp = pqueue.Elements[pqueue.A[l]].key
+                if val_tmp < val_min:
+                    s = l
 
         if s != i:
             _exchange_nodes(pqueue, i, s)
