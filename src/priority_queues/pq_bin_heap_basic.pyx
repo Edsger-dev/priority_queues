@@ -22,15 +22,15 @@ from priority_queues.commons cimport DTYPE_INF, DTYPE_t, SCANNED, IN_HEAP, NOT_I
 
 cdef void init_pqueue(
     PriorityQueue* pqueue,
-    ssize_t length) nogil:
+    size_t length) nogil:
     """Initialize the priority queue.
 
     input
     =====
     * PriorityQueue* pqueue : priority queue
-    * ssize_t length : length (maximum size) of the heap
+    * size_t length : length (maximum size) of the heap
     """
-    cdef ssize_t i
+    cdef size_t i
 
     pqueue.length = length
     ##
@@ -38,7 +38,7 @@ cdef void init_pqueue(
     ##
     # pqueue.size = length
     ##
-    pqueue.A = <ssize_t*> malloc(length * sizeof(ssize_t))
+    pqueue.A = <size_t*> malloc(length * sizeof(size_t))
     pqueue.Elements = <Element*> malloc(length * sizeof(Element))
 
     for i in range(length):
@@ -54,13 +54,13 @@ cdef void init_pqueue(
 
 cdef inline void _initialize_element(
     PriorityQueue* pqueue,
-    ssize_t element_idx) nogil:
+    size_t element_idx) nogil:
     """Initialize a single element.
 
     input
     =====
     * PriorityQueue* pqueue : priority queue
-    * ssize_t element_idx : index of the element in the element array
+    * size_t element_idx : index of the element in the element array
     """
     pqueue.Elements[element_idx].key = DTYPE_INF
     ##
@@ -84,14 +84,14 @@ cdef void free_pqueue(
 
 cdef void insert(
     PriorityQueue* pqueue,
-    ssize_t element_idx,
+    size_t element_idx,
     DTYPE_t key) nogil:
     """Insert an element into the priority queue and reorder the heap.
 
     input
     =====
     * PriorityQueue* pqueue : priority queue
-    * ssize_t element_idx : index of the element in the element array
+    * size_t element_idx : index of the element in the element array
     * DTYPE_t key : key value of the element
 
     assumptions
@@ -99,7 +99,7 @@ cdef void insert(
     * the element pqueue.Elements[element_idx] is not in the heap
     * its new key is smaller than DTYPE_INF
     """
-    cdef ssize_t node_idx = pqueue.size
+    cdef size_t node_idx = pqueue.size
 
     pqueue.size += 1
     pqueue.Elements[element_idx].state = IN_HEAP
@@ -109,7 +109,7 @@ cdef void insert(
 
 cdef void decrease_key(
     PriorityQueue* pqueue,
-    ssize_t element_idx, 
+    size_t element_idx, 
     DTYPE_t key_new) nogil:
     """Decrease the key of a element in the priority queue, 
     given its element index.
@@ -117,7 +117,7 @@ cdef void decrease_key(
     input
     =====
     * PriorityQueue* pqueue : priority queue
-    * ssize_t element_idx : index of the element in the element array
+    * size_t element_idx : index of the element in the element array
     * DTYPE_t key_new : new value of the element key 
 
     assumption
@@ -129,7 +129,7 @@ cdef void decrease_key(
         pqueue.Elements[element_idx].node_idx, 
         key_new)
 
-cdef ssize_t extract_min(PriorityQueue* pqueue) nogil:
+cdef size_t extract_min(PriorityQueue* pqueue) nogil:
     """Extract element with min key from the priority queue, 
     and return its element index.
 
@@ -139,15 +139,15 @@ cdef ssize_t extract_min(PriorityQueue* pqueue) nogil:
 
     output
     ======
-    * ssize_t : element index with min key
+    * size_t : element index with min key
 
     assumption
     ==========
     * pqueue.size > 0
     """
     cdef: 
-        ssize_t element_idx = pqueue.A[0]  # min element index
-        ssize_t node_idx = pqueue.size - 1  # last leaf node index
+        size_t element_idx = pqueue.A[0]  # min element index
+        size_t node_idx = pqueue.size - 1  # last leaf node index
 
     # exchange the root node with the last leaf node
     _exchange_nodes(pqueue, 0, node_idx)
@@ -165,19 +165,19 @@ cdef ssize_t extract_min(PriorityQueue* pqueue) nogil:
 
 cdef inline void _exchange_nodes(
     PriorityQueue* pqueue, 
-    ssize_t node_i,
-    ssize_t node_j) nogil:
+    size_t node_i,
+    size_t node_j) nogil:
     """Exchange two nodes in the heap.
 
     input
     =====
     * PriorityQueue* pqueue : priority queue
-    * ssize_t node_i: first node index
-    * ssize_t node_j: second node index
+    * size_t node_i: first node index
+    * size_t node_j: second node index
     """
     cdef: 
-        ssize_t element_i = pqueue.A[node_i]
-        ssize_t element_j = pqueue.A[node_j]
+        size_t element_i = pqueue.A[node_i]
+        size_t element_j = pqueue.A[node_j]
     
     # exchange element indices in the heap array
     pqueue.A[node_i] = element_j
@@ -190,17 +190,17 @@ cdef inline void _exchange_nodes(
     
 cdef inline void _min_heapify(
     PriorityQueue* pqueue,
-    ssize_t node_idx) nogil:
+    size_t node_idx) nogil:
     """Re-order sub-tree under a given node (given its node index) 
     until it satisfies the heap property.
 
     input
     =====
     * PriorityQueue* pqueue : priority queue
-    * ssize_t node_idx : node index
+    * size_t node_idx : node index
     """
     cdef: 
-        ssize_t l, r, i = node_idx, s
+        size_t l, r, i = node_idx, s
 
     while True:
 
@@ -229,14 +229,14 @@ cdef inline void _min_heapify(
     
 cdef inline void _decrease_key_from_node_index(
     PriorityQueue* pqueue,
-    ssize_t node_idx, 
+    size_t node_idx, 
     DTYPE_t key_new) nogil:
     """Decrease the key of an element in the priority queue, given its tree index.
 
     input
     =====
     * PriorityQueue* pqueue : priority queue
-    * ssize_t node_idx : node index
+    * size_t node_idx : node index
     * DTYPE_t key_new : new key value
 
     assumptions
@@ -245,7 +245,7 @@ cdef inline void _decrease_key_from_node_index(
     * key_new < pqueue.elements[pqueue.A[node_idx]].key
     """
     cdef:
-        ssize_t i = node_idx, j
+        size_t i = node_idx, j
         DTYPE_t key_j
 
     pqueue.Elements[pqueue.A[i]].key = key_new
