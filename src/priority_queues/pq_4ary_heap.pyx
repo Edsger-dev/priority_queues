@@ -312,34 +312,6 @@ cdef void _min_heapify(
                         if val_tmp < val_min:
                             s = c1
 
-
-        # if (
-        #     (c4 < pqueue.size) and 
-        #     (pqueue.Elements[pqueue.A[c4]].key < pqueue.Elements[pqueue.A[i]].key)
-        # ):
-        #     s = c4
-        # else:
-        #     s = i
-
-        # if (
-        #     (c3 < pqueue.size) and 
-        #     (pqueue.Elements[pqueue.A[c3]].key < pqueue.Elements[pqueue.A[s]].key)
-        # ):
-        #     s = c3
-
-        # if (
-        #     (c2 < pqueue.size) and 
-        #     (pqueue.Elements[pqueue.A[c2]].key < pqueue.Elements[pqueue.A[s]].key)
-        # ):
-        #     s = c2
-
-        # if (
-        #     (c1 < pqueue.size) and 
-        #     (pqueue.Elements[pqueue.A[c1]].key < pqueue.Elements[pqueue.A[s]].key)
-        # ):
-        #     s = c1
-
-
         if s != i:
             _exchange_nodes(pqueue, i, s)
             i = s
