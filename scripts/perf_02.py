@@ -35,7 +35,7 @@ parser.add_argument(
     "-l",
     "--library",
     dest="library_name",
-    help='library name, must be "SP" (SciPy), "PQ" (priority_queues), "IG" (iGraph), "GT" (graph-tools), "NK" (NetworkKit), "NX" (NetworkX), "SK" (scikit network)',
+    help='library name, must be "SP" (SciPy), "PQ" (priority_queues), "IG" (iGraph), "GT" (graph-tool), "NK" (NetworkKit), "NX" (NetworkX), "SK" (scikit network)',
     metavar="TXT",
     type=str,
     required=True,

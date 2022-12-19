@@ -77,7 +77,7 @@ cdef void init_heap_para(
         # bheap.elements[i].node_idx = length
 
 
-cdef inline void _initialize_element(
+cdef void _initialize_element(
     BinaryHeap* bheap,
     ssize_t element_idx) nogil:
     """Initialize a single element.
@@ -222,7 +222,7 @@ cdef ssize_t extract_min(BinaryHeap* bheap) nogil:
 
     return element_idx
 
-cdef inline void _exchange_nodes(
+cdef void _exchange_nodes(
     BinaryHeap* bheap, 
     ssize_t node_i,
     ssize_t node_j) nogil:
@@ -247,7 +247,7 @@ cdef inline void _exchange_nodes(
     bheap.elements[element_i].node_idx = node_j
 
 
-cdef inline void _min_heapify(
+cdef void _min_heapify(
     BinaryHeap* bheap,
     ssize_t node_idx) nogil:
     """Re-order sub-tree under a given node (given its node index) 
@@ -264,8 +264,8 @@ cdef inline void _min_heapify(
 
     while True:
 
-        # l =  2 * i + 1  
-        l = (i << 1) + 1
+        l =  2 * i + 1  
+        # l = (i << 1) + 1
         r = l + 1
         
         # key_i = bheap.elements[bheap.A[i]].key
@@ -305,6 +305,7 @@ cdef inline void _min_heapify(
         #         s = l
 
 
+        # optim
         s = i
         if (r < bheap.size):
             if (bheap.elements[bheap.A[r]].key < bheap.elements[bheap.A[s]].key):
@@ -317,8 +318,6 @@ cdef inline void _min_heapify(
                 (bheap.elements[bheap.A[l]].key < bheap.elements[bheap.A[s]].key)
             ):
                 s = l
-
-
 
         # if (
         #     (l < bheap.size) and 
@@ -341,7 +340,7 @@ cdef inline void _min_heapify(
             break
         
 
-cdef inline void _decrease_key_from_node_index(
+cdef void _decrease_key_from_node_index(
     BinaryHeap* bheap,
     ssize_t node_idx, 
     DTYPE_t key_new) nogil:
@@ -364,8 +363,8 @@ cdef inline void _decrease_key_from_node_index(
 
     bheap.elements[bheap.A[i]].key = key_new
     while i > 0: 
-        # j = (i - 1) // 2  
-        j = (i - 1) >> 1
+        j = (i - 1) // 2  
+        # j = (i - 1) >> 1
         key_j = bheap.elements[bheap.A[j]].key
         if key_j > key_new:
             _exchange_nodes(bheap, i, j)

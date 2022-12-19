@@ -53,15 +53,20 @@ cpdef cnp.ndarray path_length_from_bin_basic(
         # ssize_t line = 0
         ####
 
-    # initialization of the heap elements 
-    # all nodes have INFINITY key and NOT_IN_HEAP state
-    bhb.init_pqueue(&pqueue, <ssize_t>vertex_count)
 
     with nogil:
 
+        # initialization of the heap elements 
+        # all nodes have INFINITY key and NOT_IN_HEAP state
+        bhb.init_pqueue(&pqueue, <ssize_t>vertex_count)
+
         # the key is set to zero for the origin vertex,
         # which is inserted into the heap
+        ##
         bhb.insert(&pqueue, origin_vert, 0.0)
+        ##
+        # bhb.decrease_key(&pqueue, origin_vert, 0.0)
+        ##
 
         # main loop
         while pqueue.size > 0:
@@ -95,8 +100,19 @@ cpdef cnp.ndarray path_length_from_bin_basic(
 
     # copy the results into a numpy array
     path_lengths = cnp.ndarray(vertex_count, dtype=DTYPE)
-    for idx in range(<ssize_t>vertex_count):
-        path_lengths[idx] = pqueue.Elements[idx].key
+
+    ##
+    cdef:
+        DTYPE_t[::1] path_lengths_view = path_lengths
+
+    with nogil:
+
+        for i in range(<ssize_t>vertex_count):
+            path_lengths_view[i] = pqueue.Elements[i].key
+    ##
+
+    # for idx in range(<ssize_t>vertex_count):
+    #     path_lengths[idx] = pqueue.Elements[idx].key
 
     # cleanup
     bhb.free_pqueue(&pqueue)  
@@ -123,11 +139,11 @@ cpdef cnp.ndarray path_length_from_bin(
         ElementState vert_state  # vertex state
         ssize_t origin_vert = <ssize_t>origin_vert_in
 
-    # initialization of the heap elements 
-    # all nodes have INFINITY key and NOT_IN_HEAP state
-    init_heap(&bheap, <ssize_t>vertex_count)
-
     with nogil:
+
+        # initialization of the heap elements 
+        # all nodes have INFINITY key and NOT_IN_HEAP state
+        init_heap(&bheap, <ssize_t>vertex_count)
 
         # the key is set to zero for the origin vertex,
         # which is inserted into the heap
