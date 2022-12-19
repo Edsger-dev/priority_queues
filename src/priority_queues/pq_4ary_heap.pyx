@@ -257,40 +257,87 @@ cdef void _min_heapify(
     """
     cdef: 
         size_t c1, c2, c3, c4, i = node_idx, s
+        DTYPE_t val_tmp, val_min
 
     while True:
-
 
         c1 = 4 * i + 1  
         c2 = c1 + 1
         c3 = c2 + 1
         c4 = c3 + 1
         
-        if (
-            (c1 < pqueue.size) and 
-            (pqueue.Elements[pqueue.A[c1]].key < pqueue.Elements[pqueue.A[i]].key)
-        ):
-            s = c1
+        s = i
+        val_min = pqueue.Elements[pqueue.A[s]].key
+        if (c4 < pqueue.size):
+            val_tmp = pqueue.Elements[pqueue.A[c4]].key
+            if val_tmp < val_min:
+                s = c4
+                val_min = val_tmp
+            val_tmp = pqueue.Elements[pqueue.A[c3]].key
+            if val_tmp < val_min:
+                s = c3
+                val_min = val_tmp
+            val_tmp = pqueue.Elements[pqueue.A[c2]].key
+            if val_tmp < val_min:
+                s = c2
+                val_min = val_tmp
+            val_tmp = pqueue.Elements[pqueue.A[c1]].key
+            if val_tmp < val_min:
+                s = c1
         else:
-            s = i
+            if (c3 < pqueue.size):
+                val_tmp = pqueue.Elements[pqueue.A[c3]].key
+                if val_tmp < val_min:
+                    s = c3
+                    val_min = val_tmp
+                val_tmp = pqueue.Elements[pqueue.A[c2]].key
+                if val_tmp < val_min:
+                    s = c2
+                    val_min = val_tmp
+                val_tmp = pqueue.Elements[pqueue.A[c1]].key
+                if val_tmp < val_min:
+                    s = c1
+            else:
+                if (c2 < pqueue.size):
+                    val_tmp = pqueue.Elements[pqueue.A[c2]].key
+                    if val_tmp < val_min:
+                        s = c2
+                        val_min = val_tmp
+                    val_tmp = pqueue.Elements[pqueue.A[c1]].key
+                    if val_tmp < val_min:
+                        s = c1
+                else:
+                    if (c1 < pqueue.size):
+                        val_tmp = pqueue.Elements[pqueue.A[c1]].key
+                        if val_tmp < val_min:
+                            s = c1
 
-        if (
-            (c2 < pqueue.size) and 
-            (pqueue.Elements[pqueue.A[c2]].key < pqueue.Elements[pqueue.A[s]].key)
-        ):
-            s = c2
 
-        if (
-            (c3 < pqueue.size) and 
-            (pqueue.Elements[pqueue.A[c3]].key < pqueue.Elements[pqueue.A[s]].key)
-        ):
-            s = c3
+        # if (
+        #     (c4 < pqueue.size) and 
+        #     (pqueue.Elements[pqueue.A[c4]].key < pqueue.Elements[pqueue.A[i]].key)
+        # ):
+        #     s = c4
+        # else:
+        #     s = i
 
-        if (
-            (c4 < pqueue.size) and 
-            (pqueue.Elements[pqueue.A[c4]].key < pqueue.Elements[pqueue.A[s]].key)
-        ):
-            s = c4
+        # if (
+        #     (c3 < pqueue.size) and 
+        #     (pqueue.Elements[pqueue.A[c3]].key < pqueue.Elements[pqueue.A[s]].key)
+        # ):
+        #     s = c3
+
+        # if (
+        #     (c2 < pqueue.size) and 
+        #     (pqueue.Elements[pqueue.A[c2]].key < pqueue.Elements[pqueue.A[s]].key)
+        # ):
+        #     s = c2
+
+        # if (
+        #     (c1 < pqueue.size) and 
+        #     (pqueue.Elements[pqueue.A[c1]].key < pqueue.Elements[pqueue.A[s]].key)
+        # ):
+        #     s = c1
 
 
         if s != i:
