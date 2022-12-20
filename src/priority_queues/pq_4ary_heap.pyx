@@ -8,6 +8,7 @@
     Tree elements also stored in a static array.
     
 author : François Pacull
+email: francois.pacull@architecture-performance.fr
 copyright : Architecture & Performance
 license : MIT
 """
