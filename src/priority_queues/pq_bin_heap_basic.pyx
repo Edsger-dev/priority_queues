@@ -52,6 +52,31 @@ cdef void init_pqueue(
         # insert(pqueue, i, DTYPE_INF)
         ##
 
+cdef void init_pqueue_insert_all(
+    PriorityQueue* pqueue,
+    size_t length) nogil:
+    """Initialize the priority queue.
+
+    input
+    =====
+    * PriorityQueue* pqueue : priority queue
+    * size_t length : length (maximum size) of the heap
+    """
+    cdef size_t i
+
+    pqueue.length = length
+    pqueue.size = length
+
+    pqueue.A = <size_t*> malloc(length * sizeof(size_t))
+    pqueue.Elements = <Element*> malloc(length * sizeof(Element))
+
+    for i in range(length):
+        pqueue.A[i] = i
+        # insert(pqueue, i, DTYPE_INF)
+        pqueue.Elements[i].key = DTYPE_INF
+        pqueue.Elements[i].state = IN_HEAP
+        pqueue.Elements[i].node_idx = i
+
 cdef inline void _initialize_element(
     PriorityQueue* pqueue,
     size_t element_idx) nogil:
@@ -63,13 +88,9 @@ cdef inline void _initialize_element(
     * size_t element_idx : index of the element in the element array
     """
     pqueue.Elements[element_idx].key = DTYPE_INF
-    ##
     pqueue.Elements[element_idx].state = NOT_IN_HEAP
     pqueue.Elements[element_idx].node_idx = pqueue.length
-    ##
-    # pqueue.Elements[element_idx].state = IN_HEAP
-    # pqueue.Elements[element_idx].node_idx = element_idx
-    ##
+
 
 cdef void free_pqueue(
     PriorityQueue* pqueue) nogil:

@@ -208,9 +208,39 @@ assert np.allclose(
 del sp, dist_matrix_pq
 gc.collect()
 
+# priority_queues binary heap basic
+# =================================
 
-# priority_queues 3-ary heap basic
-# ================================
+start = perf_counter()
+sp = ShortestPath(
+    edges_df,
+    orientation="one-to-all",
+    check_edges=False,
+    permute=False,
+    heap_type="bin_basic_insert_all",
+)
+end = perf_counter()
+elapsed_time = end - start
+print(f"PQ Prepare the data - Elapsed time: {elapsed_time:6.2f} s")
+
+start = perf_counter()
+dist_matrix_pq = sp.run(vertex_idx=idx_from, return_inf=True, return_Series=False)
+end = perf_counter()
+elapsed_time = end - start
+print(f"PQ Dijkstra bin basic insert all - Elapsed time: {elapsed_time:6.2f} s")
+
+time_df = sp.get_timings()
+
+assert np.allclose(
+    dist_matrix_pq, dist_matrix_ref, rtol=1e-05, atol=1e-08, equal_nan=True
+)
+
+del sp, dist_matrix_pq
+gc.collect()
+
+
+# priority_queues 3-ary heap
+# ==========================
 
 start = perf_counter()
 sp = ShortestPath(
@@ -240,8 +270,8 @@ del sp, dist_matrix_pq
 gc.collect()
 
 
-# priority_queues 4-ary heap basic
-# ================================
+# priority_queues 4-ary heap
+# ==========================
 
 start = perf_counter()
 sp = ShortestPath(

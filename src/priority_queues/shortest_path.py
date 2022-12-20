@@ -9,6 +9,7 @@ from priority_queues.dijkstra import (
     path_length_from_4ary,
     path_length_from_fib,
     path_length_from_bin_basic,
+    path_length_from_bin_basic_insert_all,
     coo_tocsr,
     coo_tocsc,
 )
@@ -325,8 +326,16 @@ class ShortestPath:
                     vertex_new,
                     self.n_vertices,
                 )
-            else:  # bin_basic
+            elif self._heap_type == "bin_basic":
                 path_length_values = path_length_from_bin_basic(
+                    self._indices,
+                    self._indptr,
+                    self._edge_weights,
+                    vertex_new,
+                    self.n_vertices,
+                )
+            else:  # bin_basic_insert_all
+                path_length_values = path_length_from_bin_basic_insert_all(
                     self._indices,
                     self._indptr,
                     self._edge_weights,

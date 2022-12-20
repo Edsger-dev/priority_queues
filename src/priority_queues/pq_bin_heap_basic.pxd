@@ -16,6 +16,7 @@ cdef struct PriorityQueue:
     Element* Elements  # array storing the elements
 
 cdef void init_pqueue(PriorityQueue*, size_t) nogil
+cdef void init_pqueue_insert_all(PriorityQueue*, size_t) nogil
 cdef void free_pqueue(PriorityQueue*) nogil
 cdef void insert(PriorityQueue*, size_t, DTYPE_t) nogil
 cdef void decrease_key(PriorityQueue*, size_t, DTYPE_t) nogil
