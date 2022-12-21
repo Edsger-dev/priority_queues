@@ -54,7 +54,7 @@ parser.add_argument(
     "-t",
     "--heap_type",
     dest="heap_type",
-    help="heap type in the priority_queues library : 'fib', 'bin', '3-ary', '4-ary' or 'bin_basic'",
+    help="heap type in the priority_queues library : 'fib', 'bin', '3ary', '4ary', 'bin_basic', 'bin_basic_insert_all'",
     metavar="TXT",
     type=str,
     required=False,
