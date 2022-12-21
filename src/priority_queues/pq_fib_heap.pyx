@@ -11,7 +11,8 @@
 cimport cython
 
 from priority_queues.commons cimport ( 
-    DTYPE, DTYPE_INF)
+    DTYPE, DTYPE_INF, IN_HEAP, NOT_IN_HEAP, SCANNED)
+
 
 ######################################################################
 # FibonacciNode structure
@@ -26,7 +27,7 @@ cdef void initialize_node(FibonacciNode* node,
     node.index = index
     node.val = val
     node.rank = 0
-    node.state = 2
+    node.state = NOT_IN_HEAP
     node.parent = NULL
     node.left_sibling = NULL
     node.right_sibling = NULL

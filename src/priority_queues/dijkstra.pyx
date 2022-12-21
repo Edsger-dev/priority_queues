@@ -9,7 +9,7 @@ from libc.stdlib cimport free, malloc
 import numpy as np
 
 from priority_queues.commons cimport (
-    DTYPE, DTYPE_INF, NOT_IN_HEAP, SCANNED, DTYPE_t, ElementState)
+    DTYPE, DTYPE_INF, IN_HEAP, NOT_IN_HEAP, SCANNED, DTYPE_t, ElementState)
 
 cimport priority_queues.pq_bin_heap_basic as bhb
 cimport priority_queues.pq_3ary_heap as threeh
@@ -395,7 +395,7 @@ cpdef cnp.ndarray path_length_from_fib(
     while heap.min_node:
 
         v = remove_min(&heap)
-        v.state = 1  # SCANNED
+        v.state = SCANNED
         tail_vert_idx = <size_t>v.index
         tail_vert_val = v.val
 
@@ -404,10 +404,10 @@ cpdef cnp.ndarray path_length_from_fib(
             head_vert_idx = <size_t>csr_indices[idx]
             current_node = &nodes[head_vert_idx]
             vert_state = current_node.state
-            if vert_state != 1:
+            if vert_state != SCANNED:
                 head_vert_val = tail_vert_val + csr_data[idx]
-                if vert_state == 2:  # NOT_IN_HEAP
-                    current_node.state = 3  # IN_HEAP
+                if vert_state == NOT_IN_HEAP:
+                    current_node.state = IN_HEAP
                     current_node.val = head_vert_val
                     insert_node(&heap, current_node)
                 elif current_node.val > head_vert_val:
