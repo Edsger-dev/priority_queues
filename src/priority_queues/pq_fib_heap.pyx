@@ -1,3 +1,5 @@
+# cython: boundscheck=False, wraparound=False, embedsignature=False, cdivision=True, initializedcheck=False
+
 # ###########################################################################################################################
 #############################################################################################################################
 #Original Dijkstra implementation by Jake Vanderplas, taken from SciPy V0.11

@@ -1,4 +1,4 @@
-# cython: boundscheck=False, wraparound=False, embedsignature=False, cython: cdivision=True, initializedcheck=False
+# cython: boundscheck=False, wraparound=False, embedsignature=False, cdivision=True, initializedcheck=False
 
 
 """ Priority queue based on a minimum 3-ary heap.
