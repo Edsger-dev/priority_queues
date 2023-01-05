@@ -10,6 +10,7 @@ from priority_queues.dijkstra import (
     path_length_from_fib,
     path_length_from_bin_basic,
     path_length_from_bin_basic_insert_all,
+    path_length_from_bhl,
     coo_tocsr,
     coo_tocsc,
 )
@@ -270,7 +271,7 @@ class ShortestPath:
                 f"orientation should be either 'one-to-all' or 'all-to-one'"
             )
 
-    def run(self, vertex_idx, return_inf=False, return_Series=True):
+    def run(self, vertex_idx, return_inf=False, return_Series=True, heap_length_ratio=1.0):
 
         self._return_Series = return_Series
 
@@ -333,6 +334,18 @@ class ShortestPath:
                     self._edge_weights,
                     vertex_new,
                     self.n_vertices,
+                )
+            elif self._heap_type == "bin_length":
+                assert heap_length_ratio <= 1.0
+                assert heap_length_ratio > 0.0
+                heap_length = int(np.rint(heap_length_ratio * self.n_vertices))
+                path_length_values = path_length_from_bhl(
+                    self._indices,
+                    self._indptr,
+                    self._edge_weights,
+                    vertex_new,
+                    self.n_vertices,
+                    heap_length
                 )
             else:  # bin_basic_insert_all
                 path_length_values = path_length_from_bin_basic_insert_all(

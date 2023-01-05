@@ -44,7 +44,7 @@ cdef void init_pqueue(
     for i in range(length):
         pqueue.A[i] = length
         _initialize_element(pqueue, i)
-    for i in range(length, element_count)
+    for i in range(length, element_count):
         _initialize_element(pqueue, i)
 
 

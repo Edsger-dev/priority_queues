@@ -4,6 +4,7 @@ No check for solution
 
 example :
 $ python perf_02.py -n NY -l PQ -t bin_basic
+$ python perf_02.py -n NY -l PQ -t bin_length -r 0.5
 """
 
 import os
@@ -54,17 +55,27 @@ parser.add_argument(
     "-t",
     "--heap_type",
     dest="heap_type",
-    help="heap type in the priority_queues library : 'fib', 'bin', '3ary', '4ary', 'bin_basic', 'bin_basic_insert_all'",
+    help="heap type in the priority_queues library : 'fib', 'bin', '3ary', '4ary', 'bin_basic', 'bin_basic_insert_all', 'bin_length'",
     metavar="TXT",
     type=str,
     required=False,
     default="bin",
 )
+parser.add_argument(
+    "-r",
+    "--ratio",
+    dest="heap_length_ratio",
+    help="heap length ratio",
+    metavar="FLOAT",
+    type=float,
+    required=False,
+    default=1.0,
+)
 args = parser.parse_args()
 reg = args.network_name
 idx_from = args.idx_from
 heap_type = args.heap_type
-
+heap_length_ratio = args.heap_length_ratio
 
 # network name check
 regions_usa = [
@@ -162,7 +173,12 @@ elif lib == "PQ":
     print(f"PQ Prepare the data - Elapsed time: {elapsed_time:6.2f} s")
 
     start = perf_counter()
-    dist_matrix = sp.run(vertex_idx=idx_from, return_inf=True, return_Series=False)
+    dist_matrix = sp.run(
+        vertex_idx=idx_from,
+        return_inf=True,
+        return_Series=False,
+        heap_length_ratio=heap_length_ratio,
+    )
     end = perf_counter()
     elapsed_time = end - start
     print(f"PQ Dijkstra - Elapsed time: {elapsed_time:6.2f} s")

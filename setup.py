@@ -75,6 +75,11 @@ extensions = [
         ["src/priority_queues/dijkstra.pyx"],
         extra_compile_args=extra_compile_args,
     ),
+    Extension(
+        "priority_queues.pq_bin_heap_length",
+        ["src/priority_queues/pq_bin_heap_length.pyx"],
+        extra_compile_args=extra_compile_args,
+    ),
 ]
 
 setup(

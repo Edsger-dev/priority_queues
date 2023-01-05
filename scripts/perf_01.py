@@ -46,9 +46,21 @@ parser.add_argument(
     required=False,
     default=1000,
 )
+parser.add_argument(
+    "-r",
+    "--ratio",
+    dest="heap_length_ratio",
+    help="heap length ratio",
+    metavar="FLOAT",
+    type=float,
+    required=False,
+    default=1.0,
+)
+
 args = parser.parse_args()
 reg = args.network_name
 idx_from = args.idx_from
+heap_length_ratio = args.heap_length_ratio
 
 # network name check
 regions_usa = [
@@ -208,8 +220,45 @@ assert np.allclose(
 del sp, dist_matrix_pq
 gc.collect()
 
-# priority_queues binary heap basic
-# =================================
+
+# priority_queues binary heap basic various heap length
+# =====================================================
+
+start = perf_counter()
+sp = ShortestPath(
+    edges_df,
+    orientation="one-to-all",
+    check_edges=False,
+    permute=False,
+    heap_type="bin_length",
+)
+end = perf_counter()
+elapsed_time = end - start
+print(f"PQ Prepare the data - Elapsed time: {elapsed_time:6.2f} s")
+
+start = perf_counter()
+dist_matrix_pq = sp.run(
+    vertex_idx=idx_from,
+    return_inf=True,
+    return_Series=False,
+    heap_length_ratio=heap_length_ratio,
+)
+end = perf_counter()
+elapsed_time = end - start
+print(f"PQ Dijkstra bin length - Elapsed time: {elapsed_time:6.2f} s")
+
+time_df = sp.get_timings()
+
+assert np.allclose(
+    dist_matrix_pq, dist_matrix_ref, rtol=1e-05, atol=1e-08, equal_nan=True
+)
+
+del sp, dist_matrix_pq
+gc.collect()
+
+
+# priority_queues binary heap basic insert all at once
+# ====================================================
 
 start = perf_counter()
 sp = ShortestPath(
